@@ -7,6 +7,7 @@ Created on Wed Apr 13 17:54:31 2022
 
 from flask import Flask, request, render_template
 from flask_mysqldb import MySQL
+from termcolor import colored
 
 
 
@@ -30,14 +31,32 @@ mysql = MySQL(app)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "POST":
-        details = request.form
-        firstName = details['fname']
-        lastName = details['lname']
+        info = request.form
+        given_code = info['fcode']
         mycursor = mysql.connection.cursor()
-        query = "INSERT INTO Tickets (name, email, code, valid) VALUES (%s, %s, %s, %s)"
-        val = (firstName, lastName, 'save_code', True)
-        mycursor.execute(query, val)
+        query="SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
+        mycursor.execute(query)
         mysql.connection.commit()
+        result = mycursor.fetchone()  
+        # Make the results more userfriendly to read
+        if result[0] == 1:
+            message=colored("This code is VALID", 'green')
+            # #If the code is was valid then it has been used, so we need to update the validity of the code in the database
+            # query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
+            # mycursor.execute(query)
+            # mysql.connection.commit()
+            
+            
+            
+        else:
+            message=colored("This code is WRONG (or has been used)", 'bright red' )
+            #redirect to a page with a red background
+            @app.route("/wrong")
+            def wrongpage():
+                return render_template('wrongpage.html')
+        
+        
+        print(message)
         mycursor.close()
         print('gelukt bitches')
     return render_template('homepage.html')
