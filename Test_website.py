@@ -5,9 +5,9 @@ Created on Wed Apr 13 17:54:31 2022
 @author: 20192010
 """
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
 from flask_mysqldb import MySQL
-from termcolor import colored
+
 
 
 
@@ -24,11 +24,6 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
-@app.route("/wrong")
-def wrongpage():
-    return render_template('wrongpage.html')
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == "POST":
@@ -39,31 +34,30 @@ def index():
         
         mycursor.execute(query)
         mysql.connection.commit()
-        ##de conectie met de database werkt want ik heb met deze code een keer een record toegevoegd.###
         
-        #vgm gaat het hier mis
-        result = mycursor.fetchall()
-
-   
-        
-        # Make the results more userfriendly to read
-        if result[0] == 1:
-            message=colored("This code is VALID", 'green')
+    
+        result = str(mycursor.fetchall())
+        #result is one long string with the query and the result and the fourth from last character is the actual boolean status
+        if result[-4] == '1':
             #If the code is was valid then it has been used, so we need to update the validity of the code in the database
             query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
             mycursor.execute(query)
             mysql.connection.commit()
-            # This needs to redirect to the same page with green background
-            
+
+            color='green'
+            status='VALID'
         else:
-            message=colored("This code is WRONG (or has been used)", 'red' )
-            # This needs to redirect to the same page with red background
+            color='red'
+            status='WRONG (or has already been used)'
+            
+        
+        mycursor.close()
            
         
         
-        print(message)
-        mycursor.close()
-    return render_template('homepage.html')
+     
+        
+    return render_template('homepage.html', given_code=given_code, status=status, color=color) #result is one long string with the query and the result and the fourth from last character is the actual boolean status
 
 
 
@@ -71,4 +65,3 @@ def index():
 if __name__ == "__main__":
     app.run(debug=True, port=8181)
 
-    

@@ -24,7 +24,7 @@ mycursor = mydb.cursor(buffered=True)
 
 
 #Load email list 
-loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/Deelnemerslijst.xlsx') 
+loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/Deelnemerslijst.xlsx') 
 email_list = loaded_exel['Email'].tolist()
 names_list = loaded_exel['Names'].tolist()
 #'Email' has to be the name (value of first row) of a column. The same goes for "Names" etc

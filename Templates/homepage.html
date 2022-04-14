@@ -1,11 +1,20 @@
 <HTML>
-<BODY bgcolor="grey">
+
+
+<BODY bgcolor={{color}}>
+
 <form method="POST" action="">
     <center>
-    <H1>Vul Toegangscode in </H1> <br>
-    Toegangscode <input type = "text" name= "fcode" /> <br>
+    <H1>Please enter code </H1> <br>
+    <input type = "text" name= "fcode" /> <br>
     <input type = "submit">
-    </center>
+    <br><br>
+
+
+    The code "{{given_code}}" is {{status}}.
+    
+    </center> 
+
 </form>
 </BODY>
 </HTML>
