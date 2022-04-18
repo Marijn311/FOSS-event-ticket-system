@@ -24,8 +24,13 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
+
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    given_code=' '
+    status = ' '
+    color = 'grey'
     if request.method == "POST":
         info = request.form
         given_code = info['fcode']
