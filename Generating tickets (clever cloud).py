@@ -60,6 +60,21 @@ password = input(str("Please enter gmail (google) password. BE AWARE!!!; enterin
 # mydb.commit()
 
 
+# #Delete table called Accounts
+# query = "DROP TABLE Accounts"
+# mycursor.execute(query)
+# mydb.commit()
+
+
+# #Create table called Accounts
+# query = "CREATE TABLE Accounts (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY, username VARCHAR(30) NOT NULL, password VARCHAR(200) NOT NULL)"
+# mycursor.execute(query)
+# mydb.commit()
+
+# query = "INSERT INTO Accounts (username, password) VALUES ('testusername', 'testpass')"
+# mycursor.execute(query)
+# mydb.commit()
+
 #Clear out the table before filling it again (* did not work so I just dirty fixt it by taking valid!=5)
 query = "DELETE FROM Tickets WHERE valid!=5"
 mycursor.execute(query)

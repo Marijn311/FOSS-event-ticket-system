@@ -5,8 +5,13 @@ Created on Wed Apr 13 17:54:31 2022
 @author: 20192010
 """
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
+#from werkzeug.security import generate_password_hash, check_password_hash
+#import re
+
+
+
 
 app = Flask(__name__)
 
@@ -21,8 +26,18 @@ mysql = MySQL(app)
 
 
 #ER MOET NOG EEN INLOG BEVEILIGING OPKOMEN
-password='VoVoorMarijn'
+# 
+#app.secret_key = 'VoVoorMarijn'
 
+# @app.route('/pythonlogin/', methods=['GET', 'POST'])
+# def login():
+#     # Output message if something goes wrong...
+#     msg = ''
+#     return render_template('Index.html', msg='')
+
+
+
+# @app.route('/pythonlogin/home', methods=['GET', 'POST'])
 @app.route('/', methods=['GET', 'POST'])
 def index():
     given_code=' '
@@ -37,7 +52,8 @@ def index():
         
         mycursor.execute(query)
         mysql.connection.commit()
-        
+
+
     
         result = str(mycursor.fetchall())
         #result is one long string with the query and the result and the fourth from last character is the actual boolean status
@@ -69,8 +85,9 @@ if __name__ == "__main__":
 
 ###EIGEN AANTEKENINGEN###
 # In cmd typ je 'ipconfig'. IPv4 is je eigen laptops interne ipadress.
-# de default gateway is het adress van je modem.
-# Als je deze in je browser gooit ga je naar de website van je provider
+# De 'default gateway' is het adress van je modem.
+# Als je deze in je browser gooit ga je naar de website van je provider.
 # Hier kan je de 'port forward' bepalen naar je laptop zodat je vanaf een ander network ook op de website kan.
-# Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de tu.
-# En een intern Ip gebruiken werkt misschien ook niet omdat die wss door de firewall geblokkeerd wordt.
+# Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de TU/e.
+# En een intern IP op TU/e gebruiken gaat wss niet omdat de TU's firewall dat blokkeerd.
+# Ik wil kijken of ik de website bijvoorbeeld op een raspberry pi kan runnen en die dan gewoon altijd aan laten ergens in een kastje.

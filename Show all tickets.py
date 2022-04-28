@@ -34,3 +34,14 @@ result = mycursor.fetchall()
 for row in result:
     print(row)
     print("\n")
+
+
+#print table contents
+query = "SELECT * FROM Accounts ORDER BY id ASC"
+mycursor.execute(query)
+mydb.commit() 
+# fetch all rows 
+result = mycursor.fetchall()
+for row in result:
+    print(row)
+    print("\n")
