@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 12 14:53:00 2022
-
-@author: 20192010
-"""
-
-# -*- coding: utf-8 -*-
 """
 Ticket systeem 
 Made by Marijn Borghouts

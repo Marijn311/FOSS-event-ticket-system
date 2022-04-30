@@ -12,19 +12,19 @@ import mysql.connector
 
 # Connect to database
 mydb = mysql.connector.connect(
-  host="localhost",  #To manage database type this IP followed by :8080 in a browser and login with these credentials.
-  user="root",
-  password="marijn",
-  database="Tickets",
-  port="3308",
+  host="balbwuq2vgphmafftda4-mysql.services.clever-cloud.com",  #To manage database type this IP followed by :8080 in a browser and login with these credentials.
+  user="u0rzyyrzeczuua0e",
+  password="0gAOcli6gNMMMn3zzz31",
+  database="balbwuq2vgphmafftda4",
+  port="3306",
 )
-
+#
 # Create cursor in that database, this is an object needed to send and retrieve info from the database
 mycursor = mydb.cursor(buffered=True)
 
 
 #Load email list 
-loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/Deelnemerslijst.xlsx') 
+loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/Deelnemerslijst.xlsx') 
 email_list = loaded_exel['Email'].tolist()
 names_list = loaded_exel['Names'].tolist()
 #'Email' has to be the name (value of first row) of a column. The same goes for "Names" etc
@@ -48,7 +48,7 @@ sender_email= 'marijnborghouts@gmail.com'
 password = input(str("Please enter gmail (google) password. BE AWARE!!!; entering a correct password will automatically send out all the mails!!!:"))
 
 
-#clear out the tablefrom filling the new one (* did not work so I just dirty fixt it by taking valid!=5)
+#clear out the table before filling it again (* did not work so I just dirty fixt it by taking valid!=5)
 query = "DELETE FROM Tickets WHERE valid!=5"
 mycursor.execute(query)
 mydb.commit()
@@ -84,7 +84,8 @@ with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number
         mydb.commit()
         
 print('Emails with tickets have succesfully been send.')
-        
+    
+#het ziet er naar uit dat hij wel mails met nieuwe codes verstuurd maar hij update ze niet meer in de database
 
 
  

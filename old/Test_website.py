@@ -5,11 +5,7 @@ Created on Wed Apr 13 17:54:31 2022
 @author: 20192010
 """
 
-<<<<<<< HEAD:Checking tickets website.py
 from flask import Flask, request, render_template, redirect, url_for, session
-=======
-from flask import Flask, request, render_template, redirect, url_for
->>>>>>> parent of b0236e7 (opgeschoont):Test_website.py
 from flask_mysqldb import MySQL
 #from werkzeug.security import generate_password_hash, check_password_hash
 #import re
@@ -33,13 +29,11 @@ app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
 
-<<<<<<< HEAD:Checking tickets website.py
+
 #ER MOET NOG EEN INLOG BEVEILIGING OPKOMEN
 # 
 #app.secret_key = 'VoVoorMarijn'
-=======
 
->>>>>>> parent of b0236e7 (opgeschoont):Test_website.py
 
 # @app.route('/pythonlogin/', methods=['GET', 'POST'])
 # def login():
@@ -95,7 +89,7 @@ def index():
 if __name__ == "__main__":
     app.run(debug=True, port=8181)
 
-<<<<<<< HEAD:Checking tickets website.py
+
 # Het is misschien ook nog leuk om te kijken of we van http naar https kunnen gaan. 
 # Volgens TechNiek hebben we daar een gratis certificaat voor nodig    
 
@@ -107,5 +101,3 @@ if __name__ == "__main__":
 # Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de TU/e.
 # En een intern IP op TU/e gebruiken gaat wss niet omdat de TU's firewall dat blokkeerd.
 # Ik wil kijken of ik de website bijvoorbeeld op een raspberry pi kan runnen en die dan gewoon altijd aan laten ergens in een kastje.
-=======
->>>>>>> parent of b0236e7 (opgeschoont):Test_website.py
