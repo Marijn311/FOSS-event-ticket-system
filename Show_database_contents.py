@@ -14,25 +14,23 @@ mydb = mysql.connector.connect(
   port="3306",
 )
 
-# Create cursor in that database, this is an object needed to send and retrieve info from the database
+# Create cursor in the database, this is an object needed to send and retrieve info from the database
 mycursor = mydb.cursor(buffered=True)
 
-#print table contents
+# Print all the tickets that are in the database.
 query = "SELECT * FROM Tickets ORDER BY name ASC"
 mycursor.execute(query)
 mydb.commit() 
-# fetch all rows 
 result = mycursor.fetchall()
 for row in result:
     print(row)
     print("\n")
 
 
-#print table contents
+# Print all the accounts that are in the database
 query = "SELECT * FROM Accounts ORDER BY id ASC"
 mycursor.execute(query)
 mydb.commit() 
-# fetch all rows 
 result = mycursor.fetchall()
 for row in result:
     print(row)
