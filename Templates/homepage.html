@@ -1,21 +1,29 @@
 <HTML>
+<head>
+    <link href="{{ url_for('static', filename='style_homepage.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
 
-
-<BODY bgcolor={{color}}>
-
-<form method="POST" action="">
-    <center>
-    <H1>Please enter code </H1> <br>
-    <input type = "text" name= "fcode" /> <br>
-    <input type = "submit">
-    <br><br>
-
-
-    The code "{{given_code}}" is {{status}}.
-    
-    </center> 
-    <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
-
-</form>
-</BODY>
+<!-- 
+    I Know want to have mobile phone zoom in automatically. SO not only after clicking the textfield.
+    Or I want the cursor to auto select the type field.
+    I also need to change the person logo in the homepage screen 
+    and need to change some names in the homepage.css if I want to make it neat 
+-->
+<body bgcolor={{color}}>
+    <div class="login">
+        <h1>Enter Code</h1>
+        <div class="links">
+        </div>
+        <form action="{{ url_for('home') }}" method="post">
+            <label for="username">
+                <i class="fas fa-user"></i>
+            </label>
+            <input type="text" placeholder="3 Letter Code" id="username" name= "fcode" required>
+            <div class="msg">The code "{{given_code}}" is {{status}}</div>
+            
+            <input type="submit" value="Check">
+        </form>
+    </div>
+</body>
 </HTML>

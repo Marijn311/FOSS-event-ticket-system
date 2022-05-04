@@ -98,12 +98,12 @@ def home():
                 mycursor.execute(query)
                 mysql.connection.commit()
                 color='green' 
-                status='VALID'
+                status='valid'
                 # Color and status are active variables which are passed to the hmtl file
                 # to dynamically update how the page looks. 
             else:
                 color='red'
-                status='WRONG (or has already been used)'
+                status='wrong (or has already been used)'
             mycursor.close()
         return render_template('homepage.html', given_code=given_code, status=status, color=color)
     # if not logged in you get send to login page
