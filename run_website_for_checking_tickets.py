@@ -58,7 +58,7 @@ def login():
             return redirect(url_for('home'))
         else:
             msg = 'Incorrect username/password!'
-    return render_template('index.html', msg=msg)
+    return render_template('loginpage.html', msg=msg)
 
 
 # This redirect you to the logout page where session variables are cleared

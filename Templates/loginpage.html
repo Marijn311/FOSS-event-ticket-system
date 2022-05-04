@@ -3,7 +3,10 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Login</title>
-		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+		<!-- 
+		CSS files need to be in the 'static' folder
+		-->
+		<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet" type="text/css" />
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 	</head>
 	<body>
