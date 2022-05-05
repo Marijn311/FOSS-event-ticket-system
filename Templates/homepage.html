@@ -5,7 +5,7 @@
 </head>
 
 <!-- 
-    I Know want to have mobile phone zoom in automatically. SO not only after clicking the textfield.
+    I Know want to have mobile phone zoom in automatically. So not only after clicking the textfield.
     Or I want the cursor to auto select the type field.
     I also need to change the person logo in the homepage screen 
     and need to change some names in the homepage.css if I want to make it neat 
@@ -17,7 +17,7 @@
         </div>
         <form action="{{ url_for('home') }}" method="post">
             <label for="username">
-                <i class="fas fa-user"></i>
+                <i class="fas fa-lock"></i> <!--this is the lock icon-->
             </label>
             <input type="text" placeholder="3 Letter Code" id="username" name= "fcode" required>
             <div class="msg">The code "{{given_code}}" is {{status}}</div>
@@ -25,5 +25,8 @@
             <input type="submit" value="Check">
         </form>
     </div>
+    <center>
+    <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+    </center>
 </body>
 </HTML>

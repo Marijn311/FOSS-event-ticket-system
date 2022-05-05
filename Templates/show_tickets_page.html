@@ -1,0 +1,40 @@
+<HTML>
+<head>
+    
+</head>
+
+<body bgcolor=grey>
+   
+    <tabel>
+        <tr>
+            {% for heading in headings %}
+            <th> {{heading}} </th>
+            {% endfor %}
+        </tr>
+        {% for row in data %} <!-- Hij zou hier over tr (table row) moeten loopen en dus meerdere rijen maken, maar dat gebeurd niet-->
+        <tr>
+            {% for cell in row %}
+            <td>{{ cell }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tabel>
+    
+    <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i>Back to home</a>
+    
+<!--want hier werkt meerdere regels maken wel....-->
+    <table>
+        <tr>
+            <td>
+                "appels"
+            </td>
+        </tr>
+        <tr>
+            <td>
+                "peren"
+            </td>
+        </tr>
+        
+    </table>
+</body>
+</HTML>

@@ -27,7 +27,6 @@ app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-
 """
 This is the code for the login page
 THIS CODE CAN CHECK THE EXISTENCE OF NON-ENCRYPTED USER ACCOUNTS BUT NOW I HAVE 
@@ -61,20 +60,10 @@ def login():
     return render_template('loginpage.html', msg=msg)
 
 
-# This redirect you to the logout page where session variables are cleared
-# and immediatly after you are redirected to the login page. 
-@app.route('/login/logout')
-def logout():
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   return redirect(url_for('login'))
-
-
 # This is the code for the actual main page where the tickets can be checked.
 @app.route('/login/home', methods=['GET', 'POST'])
 def home():
-    # Check if user is loggedin then show main page
+    # Check if user is logged in then show main page
     if 'loggedin' in session:
         given_code=' '
         status = ' '
@@ -107,6 +96,38 @@ def home():
             mycursor.close()
         return render_template('homepage.html', given_code=given_code, status=status, color=color)
     # if not logged in you get send to login page
+    return redirect(url_for('login'))
+
+# Logout page where session variables are cleared
+# and immediatly after you are redirected to the login page. 
+@app.route('/login/logout')
+def logout():
+   session.pop('loggedin', None)
+   session.pop('id', None)
+   session.pop('username', None)
+   return redirect(url_for('login'))
+
+# Page which shows all tickets and validity
+@app.route('/login/home/show_tickets', methods=['GET', 'POST'])
+def show_tickets():
+    # Check if user is logged in 
+    if 'loggedin' in session:
+        # Print all the tickets that are in the database.
+        query = "SELECT * FROM Tickets ORDER BY name ASC"
+        mycursor = mysql.connection.cursor()
+        mycursor.execute(query)
+        mysql.connection.commit()
+        result = mycursor.fetchall()
+        headings = ("Name", "Code", "Validity (1=yes)")
+        for row in result:
+            print(row)
+            print("\n")
+        data = (("a", "b", "c"),
+                ("d", "e", "f"),
+                ("g", "h", "i")
+        )
+        return render_template('show_tickets_page.html', headings=headings, data=data)
+            # if not logged in you get send to login page
     return redirect(url_for('login'))
 
 # Actually host the website on the specified IP adress and propper port.
