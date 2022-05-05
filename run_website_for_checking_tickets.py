@@ -117,16 +117,19 @@ def show_tickets():
         mycursor = mysql.connection.cursor()
         mycursor.execute(query)
         mysql.connection.commit()
-        result = mycursor.fetchall()
-        headings = ("Name", "Code", "Validity (1=yes)")
+        result = mycursor.fetchall() # Result is a tuple of dictionaries
+        # The following loop restructers only relevant info into a list of lists 
+        data = []
         for row in result:
-            print(row)
-            print("\n")
-        data = (("a", "b", "c"),
-                ("d", "e", "f"),
-                ("g", "h", "i")
-        )
-        return render_template('show_tickets_page.html', headings=headings, data=data)
+            data_row = []
+            name = row.get('name')
+            code = row.get('code')
+            validity = row.get('valid')
+            data_row.append(name)
+            data_row.append(code)
+            data_row.append(validity)
+            data.append(data_row)     
+        return render_template('show_tickets_page.html', data=data)
             # if not logged in you get send to login page
     return redirect(url_for('login'))
 

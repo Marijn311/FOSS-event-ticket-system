@@ -1,40 +1,31 @@
 <HTML>
 <head>
-    
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 </head>
 
-<body bgcolor=grey>
-   
-    <tabel>
-        <tr>
-            {% for heading in headings %}
-            <th> {{heading}} </th>
-            {% endfor %}
-        </tr>
-        {% for row in data %} <!-- Hij zou hier over tr (table row) moeten loopen en dus meerdere rijen maken, maar dat gebeurd niet-->
-        <tr>
-            {% for cell in row %}
-            <td>{{ cell }}</td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
-    </tabel>
-    
+<body bgcolor=lightgrey>
+    <center>
+    <h1>
+        These are the tickets that are in the system
+    </h1>
+    <h5>
+        "1 means a code is still valid"
+    </h5>
     <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i>Back to home</a>
     
-<!--want hier werkt meerdere regels maken wel....-->
-    <table>
-        <tr>
-            <td>
-                "appels"
-            </td>
-        </tr>
-        <tr>
-            <td>
-                "peren"
-            </td>
-        </tr>
+    <h3>
+    {% for row in data %} <!-- This would be neater with a table tag but that didn't work when i tried-->
+        {% for cell in row %}
+            {{ cell }}
+        {% endfor %}
+        <br>
+    {% endfor %}
+    </h3>
+    </center>
         
-    </table>
+
+    
+    
+
 </body>
 </HTML>
