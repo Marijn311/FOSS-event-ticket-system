@@ -17,7 +17,7 @@ Tickets genereren:
 3.	Vervolgens open je het "sending_tickets" script op je laptop met een editor zoals Spyder of VSCode. Je moet een aantal dingen in dit script aanpassen als je mails wilt zenden.
 	-Op line X vul je de locatie (de folder op je latop) in waar de deelnemerslijst staat opgeslagen.
 	-Op line Y vul je in wat de sender-email is, dit is het Gmailadres wat de tickets gaat verzenden. 
-	-Op line X vul je de et onderwerp en de inhoud van de mail in.
+	-Op line Z vul je de et onderwerp en de inhoud van de mail in.
 4.	Zorg dat de database online is en dat je goed verbonden bent, als je kiest om een nieuwe database te maken.
 5.	Als je het script nu runt kan het zijn dat je nog wat packages moet instaleren als je die in je conda environment mist. (Een nieuwe environment aanmaken is geen slecht idee)
 6.	Als het script runt zonder errors dan vraagt hij om een wachtwoord. Dit is het wachtwoord wat bij het Gmail account hoort van de sender-Gmail. Zodra je een goed wachtwoord intypt worden alle mails meteen verzonden! 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<meta charset="utf-8">
+		<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=0.8">
 		<title>Login</title>
 		<!-- 
 		CSS files need to be in the 'static' folder
@@ -15,7 +15,7 @@
 			<div class="links">
 				
 			</div>
-			<form action="{{ url_for('login') }}" method="post">
+			<form autocomplete="off" action="{{ url_for('login') }}" method="post">
 				<label for="username">
 					<i class="fas fa-user"></i>
 				</label>

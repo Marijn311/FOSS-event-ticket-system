@@ -1,33 +1,39 @@
 <HTML>
 <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=0.8">
     <link href="{{ url_for('static', filename='style_homepage.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+
 </head>
 
+
 <!-- 
-    I Know want to have mobile phone zoom in automatically. So not only after clicking the textfield.
-    Or I want the cursor to auto select the type field.
-    I also need to change the person logo in the homepage screen 
-    and need to change some names in the homepage.css if I want to make it neat 
+    Sadly, it seems to be the cause that the keyboard cannot be automatically be pulled up.
+    The autofocus/onfocus command that I use is partly ignored by standard browsers on purpose.
+    And I need to change some names that refer to the css in the homepage.css if I want to make it neat. 
 -->
 <body bgcolor={{color}}>
+
+
+
+    
     <div class="login">
         <h1>Enter Code</h1>
         <div class="links">
         </div>
-        <form action="{{ url_for('home') }}" method="post">
+        <form autocomplete="off" action="{{ url_for('home') }}" method="post">
             <label for="username">
                 <i class="fas fa-lock"></i> <!--this is the lock icon-->
             </label>
-            <input type="text" placeholder="3 Letter Code" id="username" name= "fcode" required>
+            <input autofocus="autofocus" onfocus="this.select()" type="text" placeholder="3 Letter Code" id="username" name= "fcode" required >
             <div class="msg">The code "{{given_code}}" is {{status}}</div>
             
             <input type="submit" value="Check">
         </form>
     </div>
     <center>
-    <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a><br><br>
-    <a href="{{ url_for('show_tickets') }}"><i class="fas fa-sign-out-alt"></i>Show all tickets</a>
+    <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a><br><br>
+    <a href="{{ url_for('show_tickets') }}"><i class="fas fa-sign-out-alt"></i> Show all tickets</a>
     </center>
 </body>
 </HTML>

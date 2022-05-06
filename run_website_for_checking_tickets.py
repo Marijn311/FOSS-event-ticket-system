@@ -141,8 +141,6 @@ if __name__ == "__main__":
 
 """ 
 ###EIGEN AANTEKENINGEN###
-Waarom linked de CSS niet met de HTML file? 
-Eigenlijk moet ik kijken of er mobile html opmaakt packages of tutorials zijn.
 Het is misschien ook nog leuk om te kijken of we van http naar https kunnen gaan. 
 Volgens TechNiek hebben we daar een gratis certificaat voor nodig.
 Ook wil ik nog kijken of ik de website kan hosten op een raspberry pi.

@@ -28,7 +28,7 @@ mycursor = mydb.cursor(buffered=True)
 
 # Load email list 
 # This locations has to be adjusted depending on where the "participants" excel file is safed.
-loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/Deelnemerslijst.xlsx') 
+loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/participants#.xlsx') 
 email_list = loaded_exel['Email'].tolist()
 names_list = loaded_exel['Names'].tolist() 
 """
