@@ -76,10 +76,11 @@ def home():
             query="SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
             mycursor.execute(query)
             mysql.connection.commit()
-            result = str(mycursor.fetchall())
-            # Somehow 'result' is one long string with the query and the result in it.
-            # The fourth-from-last character is the actual boolean status of the ticket validity.
-            if result[-4] == '1':
+            result = mycursor.fetchall() # Result is a tuple filled with dictionaries,
+            # the following loop restructers only relevant info into a list of lists. 
+            for row in result: #there is only one row so perhaps this can be deleted or subsituted with something like result[0].get(). Or try to use the .fetchone() command in the line above
+                validity = row.get('valid')
+            if validity == "1": # Now that the result is propperly extracted this 1 might be a int value as opposed to a string   
                 # If the given code is valid then a guest has been admitted.
                 # Now we need to update the validity of the code in the database, 
                 # else everyone could use the same ticket.
@@ -87,15 +88,15 @@ def home():
                 mycursor.execute(query)
                 mysql.connection.commit()
                 color='green' 
-                status='valid'
+                status='valid!'
                 # Color and status are active variables which are passed to the hmtl file
                 # to dynamically update how the page looks. 
             else:
                 color='red'
-                status='wrong (or has already been used)'
+                status='wrong (or has already been used).'
             mycursor.close()
         return render_template('homepage.html', given_code=given_code, status=status, color=color)
-    # if not logged in you get send to login page
+    # if not logged in you get send to login page.
     return redirect(url_for('login'))
 
 # Logout page where session variables are cleared
@@ -117,8 +118,8 @@ def show_tickets():
         mycursor = mysql.connection.cursor()
         mycursor.execute(query)
         mysql.connection.commit()
-        result = mycursor.fetchall() # Result is a tuple of dictionaries
-        # The following loop restructers only relevant info into a list of lists 
+        result = mycursor.fetchall() # Result is a tuple filled with dictionaries,
+        # the following loop restructers only relevant info into a list of lists. 
         data = []
         for row in result:
             data_row = []
@@ -130,7 +131,7 @@ def show_tickets():
             data_row.append(validity)
             data.append(data_row)     
         return render_template('show_tickets_page.html', data=data)
-            # if not logged in you get send to login page
+            # If not logged in you get send to login page
     return redirect(url_for('login'))
 
 # Actually host the website on the specified IP adress and propper port.
@@ -141,15 +142,47 @@ if __name__ == "__main__":
 
 """ 
 ###EIGEN AANTEKENINGEN###
-Het is misschien ook nog leuk om te kijken of we van http naar https kunnen gaan. 
+
+-Het is misschien ook nog leuk om te kijken of we van http naar https kunnen gaan. 
 Volgens TechNiek hebben we daar een gratis certificaat voor nodig.
-Ook wil ik nog kijken of ik de website kan hosten op een raspberry pi.
+
+-Ook wil ik nog kijken of ik de website kan hosten op een raspberry pi. 
+Deze kun je dan veilig ergens in een kast zetten en altijd dit script laten runnen.
+Als dat werkt dan is het eigenlijk hetzelfde als je website echt laten hosten door een 
+bedrijf op het internet. Alleen zo betaal je geen maandelijke kosten (op een klein beetje stroom na).
+En dit is natuurlijk veel leuker om zelf te doen / ui te zoeken.
 
 
-In cmd typ je 'ipconfig'. IPv4 is je eigen laptops interne ipadress.
-de default gateway is het adress van je modem.
-Als je deze in je browser gooit ga je naar de website van je provider
-Hier kan je de 'port forward' bepalen naar je laptop zodat je vanaf een ander network ook op de website kan.
-Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de tu.
+-Als je 'ipconfig' in je terminal typt dan kun je, je IP adressen zien. 
+IPv4 is je eigen laptops "interne" IP adress wat je apparaten van je modem krijgen als ze op de wifi zitten.
+De default gateway is het "externe" IP adress (het adress van je modem zelf).
+Als je iemand van buiten af (buiten de wifi waarop deze website runt) op de website wil laten,
+heb je het externe IP adress nodig (om naar de modem te komen) en het goede port nummer (om naar het goede apparaat te komen). 
+LET OP dat deze adressen kunnen veranderen, zelfs binnnen je eigen netwerk, dit is onhandig.
+Als je deze in je browser je "default gateway" gooit ga je naar de website van je provider.
+Hier kan je de 'port forward' en IP adress instellen en vastzetten zodat hij niet meer veranderd.
+Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de TU/e.
 En een intern Ip gebruiken werkt misschien ook niet omdat die wss door de firewall geblokkeerd wordt.
+En dan werkt de site alleen als je op de uni bent, en dus niet bij de Villa.
+
+-Save a copy of the old way to extract the validity (this worked but was less neat.)
+            
+            result = str(mycursor.fetchall())
+            # Somehow 'result' is one long string with the query and the result in it.
+            # The fourth-from-last character is the actual boolean status of the ticket validity.
+            if result[-4] == '1':
+                # If the given code is valid then a guest has been admitted.
+                # Now we need to update the validity of the code in the database, 
+                # else everyone could use the same ticket.
+                query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
+                mycursor.execute(query)
+                mysql.connection.commit()
+                color='green' 
+                status='valid!'
+                # Color and status are active variables which are passed to the hmtl file
+                # to dynamically update how the page looks.
+                
+
+
+
 """

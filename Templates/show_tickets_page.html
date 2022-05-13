@@ -7,26 +7,24 @@
 <body bgcolor=grey text="black">
     <center>
     <h1>
-        These are the tickets that are in the system
+        These are the tickets that are saved in the system
     </h1>
     <h5>
-        "1 means a code is still valid"
+        A "1" means that a code is still valid
     </h5>
     <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i> Back to home</a>
     
     <h3>
-    {% for row in data %} <!-- This would be neater with a table tag but that didn't work when i tried-->
+    <!-- This would be neater with a <table> tag but that didn't work when I tried it.
+        However this code is also fine and compact.-->
+    {% for row in data %} 
         {% for cell in row %}
             {{ cell }}
         {% endfor %}
         <br>
     {% endfor %}
     </h3>
-    </center>
-        
-
-    
-    
+    </center>   
 
 </body>
 </HTML>
