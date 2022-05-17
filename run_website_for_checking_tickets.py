@@ -60,6 +60,11 @@ def login():
     return render_template('loginpage.html', msg=msg)
 
 
+# This is just a placeholder page to always redirect a user to the login page. 
+@app.route('/')
+def reroute():
+   return redirect(url_for('login'))
+
 # This is the code for the actual main page where the tickets can be checked.
 @app.route('/login/home', methods=['GET', 'POST'])
 def home():
