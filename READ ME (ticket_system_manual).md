@@ -31,4 +31,14 @@ Voor het verifiëren van de tickets kun je het "run_website_for_checking_tickets
 1. Het script runt al het goed is meteen. Je hoeft alleen te zprgen dat de database verbinding goed gaat door te checken of die gegevens nog kloppen.
 2. Het script output een IP-adress waarop de website runt. Echter willen we graag dat de webserver (de Raspberry Pi) bereikbaar is vanaf een andere locatie (de deur van InVivo of van de Villa). Daarom hebben we het externe IP adress nodig van de Pi en het bijbehoorende port-nummer. IP-adressen kun je bekijken door "ipconfig in je terminal te typen". Om deze statisch te maken (wat je wil) of om de port-nummer aan te passen heb je toegang tot de modem nodig. Dit is niet mogelijk op de uni, tenzij de Intern van het bestuur dat weet te fixen. Maar ik vrees dat de Pi dus bij iemand thuis zal moeten staan.
 
- 
+Voor het beheren van de raspberry-Pi (gelieve niet aan te komen tenzij je weet wat je doet):
+Dit werkt sws alleen vanaf mijn wifi in Woensel.
+1. inloggen met "  ssh pi@192.168.2.120  " en het wachtwoord is: raspberry
+2. cd EventTiks/
+3. python run_website_for_checking_tickets.py
+4. ctrl+z
+5. bg
+6. disown
+
+met sudo reboot kan je heel de boel afsluiten en daarna dus weer opnieuw opstarten zoals hierboven.
+

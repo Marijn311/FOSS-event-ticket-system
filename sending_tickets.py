@@ -28,7 +28,7 @@ mycursor = mydb.cursor(buffered=True)
 
 # Load email list 
 # This locations has to be adjusted depending on where the "participants" excel file is safed.
-loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/participants#.xlsx') 
+loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/a_commissies/a_fissacom/Tickets/EventTiks/participants.xlsx') 
 email_list = loaded_exel['Email'].tolist()
 names_list = loaded_exel['Names'].tolist() 
 """
@@ -81,7 +81,7 @@ with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number
         valid_codes.append(save_code)
         # Here you write the actual message that people get in the mail.    
         subject = 'Jouw unieke toegangscode voor activiteit X'
-        body = f'Beste {names_list[i]},\n\n jouw unieke toegangscode is: {save_code}. \n\n Have Fun!' 
+        body = f'Beste {names_list[i]},\n\n Jouw unieke toegangscode is: {save_code} \n\n Have Fun!' 
         message = f'Subject: {subject}\n\n{body}'
         smtp.sendmail(sender_email, receiver_email, message)
         

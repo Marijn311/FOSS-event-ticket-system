@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Ticket system 
-Created by Marijn
+Created by Marijn Borghouts
 """
 
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
-import re #I am not exactly sure if I am still using this.
+
 
 app = Flask(__name__)
 
@@ -34,6 +34,7 @@ ADDED A SINGLE HARDCODED ACCOUNT, THIS IS EASIER AND LESS RISK. SAVING A HASHED 
 ONLY INCREASES THE RISK OF SOMEONE GAINING ACCES TO THE LOGIN CODE. COMPARED TO HARDCODING A FIXED PASSWORD
 Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask-mysql/
 """
+
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -81,11 +82,10 @@ def home():
             query="SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
             mycursor.execute(query)
             mysql.connection.commit()
-            result = mycursor.fetchall() # Result is a tuple filled with dictionaries,
-            # the following loop restructers only relevant info into a list of lists. 
-            for row in result: #there is only one row so perhaps this can be deleted or subsituted with something like result[0].get(). Or try to use the .fetchone() command in the line above
-                validity = row.get('valid')
-            if validity == "1": # Now that the result is propperly extracted this 1 might be a int value as opposed to a string   
+            result = str(mycursor.fetchall())
+            # 'result' is one long string with the query and the result in it.
+            # The fourth-from-last character is the actual boolean status of the ticket validity.
+            if result[-4] == '1':    
                 # If the given code is valid then a guest has been admitted.
                 # Now we need to update the validity of the code in the database, 
                 # else everyone could use the same ticket.
@@ -169,25 +169,6 @@ Hier kan je de 'port forward' en IP adress instellen en vastzetten zodat hij nie
 Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de TU/e.
 En een intern Ip gebruiken werkt misschien ook niet omdat die wss door de firewall geblokkeerd wordt.
 En dan werkt de site alleen als je op de uni bent, en dus niet bij de Villa.
-
--Save a copy of the old way to extract the validity (this worked but was less neat.)
-            
-            result = str(mycursor.fetchall())
-            # Somehow 'result' is one long string with the query and the result in it.
-            # The fourth-from-last character is the actual boolean status of the ticket validity.
-            if result[-4] == '1':
-                # If the given code is valid then a guest has been admitted.
-                # Now we need to update the validity of the code in the database, 
-                # else everyone could use the same ticket.
-                query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
-                mycursor.execute(query)
-                mysql.connection.commit()
-                color='green' 
-                status='valid!'
-                # Color and status are active variables which are passed to the hmtl file
-                # to dynamically update how the page looks.
-                
-
 
 
 """
