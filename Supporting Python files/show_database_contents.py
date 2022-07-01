@@ -18,13 +18,16 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor(buffered=True)
 
 # Print all the tickets that are in the database.
-query = "SELECT * FROM Tickets ORDER BY name ASC"
+query = "SELECT * FROM Tickets ORDER BY code ASC"
 mycursor.execute(query)
 mydb.commit() 
 result = mycursor.fetchall()
+amount_of_rows = 0
 for row in result:
     print(row)
     print("\n")
+    amount_of_rows = amount_of_rows + 1
+print("aantal rijen is: ", amount_of_rows)
 
 
 # Print all the accounts that are in the database

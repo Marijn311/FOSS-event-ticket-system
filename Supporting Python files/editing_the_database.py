@@ -37,8 +37,9 @@ mycursor = mydb.cursor(buffered=True)
 # mydb.commit()
 
 
-# # Delete table called Accounts
-# query = "DROP TABLE Accounts"
+
+# #change maximum allowable characters
+# query = "ALTER TABLE Tickets MODIFY email VARCHAR(100) NOT NULL"
 # mycursor.execute(query)
 # mydb.commit()
 
