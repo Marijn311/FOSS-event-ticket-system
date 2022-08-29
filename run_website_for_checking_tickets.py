@@ -5,8 +5,8 @@ Created by Marijn Borghouts
 """
 
 """
-Auto-run upon booting:
-ADD CODE HERE
+Auto-run upon booting (so that the site will remain running after a crash or poweroutage):
+still needs to be implemented
 """
 
 from flask import Flask, request, render_template, redirect, url_for, session
