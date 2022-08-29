@@ -4,6 +4,11 @@ Ticket system
 Created by Marijn Borghouts
 """
 
+"""
+Auto-run upon booting:
+ADD CODE HERE
+"""
+
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 
