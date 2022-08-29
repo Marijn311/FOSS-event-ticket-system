@@ -15,7 +15,7 @@ from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 
-# Secret key (it's for extra protection)
+# Secret key for extra protection. (I forgot how this worked though)
 app.secret_key = '33PilsIsLekker35'
 
 """
@@ -43,7 +43,7 @@ Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask
 
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    msg='' # This is to define an no error message at before a login attempt.
+    msg='' # This is to define a potential error message. Required below.
     # Else you get an non defined variable error whilst loading the site.
     # If fields are filled in, create local variables
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
