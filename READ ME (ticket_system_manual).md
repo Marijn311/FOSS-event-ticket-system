@@ -48,12 +48,15 @@ met een door mij bepaalde gebruikersnaam en wachtwoord. Eenmaal ingelogt kunnen 
 
 Voor het beheren van de raspberry-Pi (gelieve niet aan te komen tenzij je weet wat je doet):
 Dit werkt sws alleen vanaf mijn wifi in Woensel.
-1. inloggen met "  ssh pi@192.168.2.120  " en het wachtwoord is: raspberry
+1. verbinding maken met "  ssh pi@192.168.2.120  " en het wachtwoord is: raspberry
 2. cd EventTiks/
 3. python run_website_for_checking_tickets.py
 4. ctrl+z
 5. bg
 6. disown
 
-met "sudo reboot" kan je heel de boel afsluiten/resetten en daarna dus weer opnieuw opstarten zoals hierboven.
+Met "sudo reboot" kan je heel de boel afsluiten/resetten en daarna dus weer opnieuw opstarten zoals hierboven.
+Echter heb ik nu een sh launcher scriptje toegevoegd die run_website.py automatisch starts bij een reboot.
+Dit heb ik gedaan met deze guide: https://www.instructables.com/Raspberry-Pi-Launch-Python-script-on-startup/
+Hierbij moest je bbt veranderen naar je eigen map naam en moet je de benodigde packages vanuit de root instaleren omdat ie daar vandaan boot.
 
