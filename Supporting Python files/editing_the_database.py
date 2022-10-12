@@ -69,7 +69,8 @@ I COULD ALSO WRITE A QUERY TO DELETE OR ADJUST A SPECIFIC RECORD IN THE TICKETS 
 
 # # Add tickets to the database
 # query = "INSERT INTO Tickets (name, email, code, valid) VALUES (%s, %s, %s, %s)"
-# val = (naam, email, code, True)
+# val = ("Bram", "gingwatmis", "PIK", True)
+
 # mycursor.execute(query, val)
 # mydb.commit()
-
+# print('added code')

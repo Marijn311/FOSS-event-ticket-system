@@ -27,6 +27,7 @@ mycursor = mydb.cursor(buffered=True)
 
 # Load email list 
 # This locations has to be adjusted depending on where the "participants" excel file is safed
+# There should be 2 columns with "Names" and "Email" as first row (header)
 loaded_exel = pd.read_excel (r'C:/Users/20192010/Downloads/deelnemers.xlsx') 
 email_list = loaded_exel['Email'].tolist()
 names_list = loaded_exel['Names'].tolist() 
@@ -61,7 +62,7 @@ So you no longer use your normal google password, but a randomly generated pass 
 """
 sender_email= 'marijnborghouts@gmail.com'
 password = input(str("Please enter gmail (google) password. BE AWARE!!!; entering a correct password will automatically send out all the mails!!!:"))
-# My new 16 character password is: kyrgxwhgbpluclua
+# Aplication specific 16 character password is: kyrgxwhgbpluclua
 
 # # Clear out the Tickets table before filling it again (* did not work so I just dirty fixed it by taking valid!=5, since this includes all table entries)
 # query = "DELETE FROM Tickets WHERE valid!=5"
@@ -87,7 +88,7 @@ with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number, in my
         valid_codes.append(save_code)
         # Here you write the actual message that people get in the mail    
         subject = 'Toegangscode voor BMT-feest'
-        body = f'Beste {names_list[i]},\n\n Jouw unieke toegangscode is: {save_code} \n\n Veel plezier, \n De Fissacom' 
+        body = f'Beste {names_list[i]},\n\n Leuk dat je naar het BMT-Feest komt. \nJouw unieke toegangscode is: {save_code} \n\n Veel plezier, \n De Fissacom' 
         message = f'Subject: {subject}\n\n{body}'
         smtp.sendmail(sender_email, receiver_email, message)
         
@@ -98,3 +99,6 @@ with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number, in my
         mydb.commit()
         
 print('Emails with tickets have succesfully been send.')
+
+#Somehow geeft het exporteren van de deelnemerslijst soms dubbele entries
+#met de namen werken is kut. Voortaan op de ticket site wil ik emails weergeven
