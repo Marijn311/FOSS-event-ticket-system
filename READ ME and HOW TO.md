@@ -4,17 +4,15 @@ Deze file bevat een toelichting bij het ticketsysteem uit deze map.
 Dit project bestaat uit twee hoofd scripts. Één script om unieke tickets te genereren, op te slaan, en te verzenden naar deelnemers. En één script die een website runt. Op deze website 
 kun je de geldigheid van tickets checken. Dit doen de mensen aan de ingang van een activiteit.
 Verder zijn er een ondersteunende Python file die makkelijk sql commandos naar de database kan sturen om zo de database "handmatig" aan te passen als dat nodig zou zijn.
-In de scripts heb ik super veel comments gezet zodat het hopelijk goed te volgen is voor mensen die minder van programmeren afweten dan ik.
 
 Dit systeem zorgt ervoor dat het niet meer nodig is om (visite)kaartjes te laten drukken voor het BMT feest. Dit is duurzamer en bespaart meer dan 100 euro per jaar voor de feestcommissie. 
-Verder kan dit systeem ook gebruikt worden voor andere Prot activiteiten. Dan hoeft er niet meer aangekloot te worden met afgedrukte inschrijflijsten.
+Verder kan dit systeem ook gebruikt worden voor andere Prot activiteiten. Dan hoeft er niet meer gespeurd te worden door afgedrukte inschrijflijsten aan de deur.
 
 Dit systeem is bedacht en gecodeerd door mij (Marijn Borghouts) met dank aan TechNIEK voor het helpen opzetten en begrijpen van de database.
 Dit systeem is begonnen als een simpel idee maar uiteindelijk uitgegroeid tot een best serieus hobby project. Als er dingen niet duidelijk zijn of je hebt na dit bestand nog steeds vragen 
 dan kun je me altijd mailen op m.m.borghouts@student.tue.nl 
 
-Zorg er voor dat je dit systeem een keer goed opzet en test voordat iedereen dronken op een feest staat want anders wordt het echt een drama. In het begin lijkt dit systeem misschien 
-te technisch maar als je de setup één keer hebt gedaan, en er een keer mee hebt gewerkt is alles super simpel. Iedereen met een minimale basis kennis van python zou dit systeem moeten 
+Iedereen met een basis kennis van python zou dit systeem moeten 
 kunnen gebruiken en begrijpen. (Ik kan ook nog een keer proberen om het script wat de tickets verstuurd om te zetten naar een webpagina ipv een Python file. Voor de gebruiksvriendelijkheid)
 
 HOW TO: Tickets genereren---------------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,29 +1,18 @@
-# -*- coding: utf-8 -*-
 """
 Ticket system 
 Created by Marijn Borghouts
-"""
-
-"""
-Auto-run upon booting (so that the site will remain running after a crash or poweroutage):
-still needs to be implemented
+Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask-mysql/
 """
 
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
-
 
 app = Flask(__name__)
 
 # Secret key for extra protection. (I forgot how this worked though)
 app.secret_key = '33PilsIsLekker35'
 
-"""
-Connect to the database
-This is a very small database that is hosted online on "clever cloud".
-Clever cloud offers a free hosted database for very small developer testing.
-It can store something like 10MB but that is enough for this purpose.
-"""
+# Connect to the database
 app.config['MYSQL_USER'] ="u0rzyyrzeczuua0e"
 app.config['MYSQL_PASSWORD'] = "0gAOcli6gNMMMn3zzz31"
 app.config['MYSQL_HOST'] = "balbwuq2vgphmafftda4-mysql.services.clever-cloud.com"
@@ -32,19 +21,9 @@ app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
-"""
-This is the code for the login page
-THIS CODE CAN CHECK THE EXISTENCE OF NON-ENCRYPTED USER ACCOUNTS BUT NOW I HAVE 
-ADDED A SINGLE HARDCODED ACCOUNT, THIS IS EASIER AND LESS RISK. SAVING A HASHED PASSWORD IN THE DATABASE 
-ONLY INCREASES THE RISK OF SOMEONE GAINING ACCES TO THE LOGIN CODE. COMPARED TO HARDCODING A FIXED PASSWORD
-Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask-mysql/
-"""
-
-
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    msg='' # This is to define a potential error message. Required below.
-    # Else you get an non defined variable error whilst loading the site.
+    errormsg=''
     # If fields are filled in, create local variables
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
@@ -55,15 +34,15 @@ def login():
         So the session data can be passed to the home page to validate if the persons has logged in or not.
         This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
         """
-        if username == 'Fissacom' and password == 'VoVoorMarijn':
+    if username == 'Marijn Borghouts' and password == 'PilsIsLekker35!': # Hardcoded valid account credentials
             session['loggedin'] = True
             session['id'] = 1
-            session['username'] = 'Fissacom'
+            session['username'] = 'Marijn Borghouts'
             # Redirect to home page if login was valid (if the session variables exist)
             return redirect(url_for('home'))
-        else:
-            msg = 'Incorrect username/password!'
-    return render_template('loginpage.html', msg=msg)
+    else:
+            errormsg = 'Incorrect username/password!'
+    return render_template('loginpage.html', msg=errormsg)
 
 
 # This is just a placeholder page to always redirect a user to the login page. 
@@ -152,16 +131,6 @@ if __name__ == "__main__":
 
 """ 
 ###EIGEN AANTEKENINGEN###
-
--Het is misschien ook nog leuk om te kijken of we van http naar https kunnen gaan. 
-Volgens TechNiek hebben we daar een gratis certificaat voor nodig.
-
--Ook wil ik nog kijken of ik de website kan hosten op een raspberry pi. 
-Deze kun je dan veilig ergens in een kast zetten en altijd dit script laten runnen.
-Als dat werkt dan is het eigenlijk hetzelfde als je website echt laten hosten door een 
-bedrijf op het internet. Alleen zo betaal je geen maandelijke kosten (op een klein beetje stroom na).
-En dit is natuurlijk veel leuker om zelf te doen / ui te zoeken.
-
 
 -Als je 'ipconfig' in je terminal typt dan kun je, je IP adressen zien. 
 IPv4 is je eigen laptops "interne" IP adress wat je apparaten van je modem krijgen als ze op de wifi zitten.
