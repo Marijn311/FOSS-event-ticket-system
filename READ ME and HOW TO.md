@@ -58,3 +58,7 @@ Echter heb ik nu een sh launcher scriptje toegevoegd die run_website.py automati
 Dit heb ik gedaan met deze guide: https://www.instructables.com/Raspberry-Pi-Launch-Python-script-on-startup/
 Hierbij moest je bbt veranderen naar je eigen map naam en moet je de benodigde packages vanuit de root instaleren omdat ie daar vandaan boot.
 
+Als je changes maakt moet je wel de versie die op de raspberry pi staat updaten.
+kopieer de nieuwe versie naar downloads folder en run dan het volgende in cmd.
+Het wachtwoord is raspberry. Na het veranderen moet je rebooten. zodat de nieuwe versie begint met runnen:
+scp C:\Users\20192010\Downloads\run_website_for_checking_tickets.py pi@192.168.2.120:EventTiks/

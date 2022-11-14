@@ -24,6 +24,8 @@ mysql = MySQL(app)
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
     errormsg=''
+    username=""
+    password=""
     # If fields are filled in, create local variables
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
