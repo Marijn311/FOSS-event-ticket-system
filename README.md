@@ -1,64 +1,33 @@
-EVENTIKS ALGEMEEN-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Deze file bevat een toelichting bij het ticketsysteem uit deze map. 
+# EVENTTIKS README
 
-Dit project bestaat uit twee hoofd scripts. Één script om unieke tickets te genereren, op te slaan, en te verzenden naar deelnemers. En één script die een website runt. Op deze website 
-kun je de geldigheid van tickets checken. Dit doen de mensen aan de ingang van een activiteit.
-Verder zijn er een ondersteunende Python file die makkelijk sql commandos naar de database kan sturen om zo de database "handmatig" aan te passen als dat nodig zou zijn.
+EVENTTIKS is a hobby project that started when I was looking for a free app to send and scan event tickets. There was no good working free app with the features I needed, so I decided to develop an app myself.
 
-Dit systeem zorgt ervoor dat het niet meer nodig is om (visite)kaartjes te laten drukken voor het BMT feest. Dit is duurzamer en bespaart meer dan 100 euro per jaar voor de feestcommissie. 
-Verder kan dit systeem ook gebruikt worden voor andere Prot activiteiten. Dan hoeft er niet meer gespeurd te worden door afgedrukte inschrijflijsten aan de deur.
+## Project Overview
+This project consists of two main scripts:
 
-Dit systeem is bedacht en gecodeerd door mij (Marijn Borghouts) met dank aan TechNIEK voor het helpen opzetten en begrijpen van de database.
-Dit systeem is begonnen als een simpel idee maar uiteindelijk uitgegroeid tot een best serieus hobby project. Als er dingen niet duidelijk zijn of je hebt na dit bestand nog steeds vragen 
-dan kun je me altijd mailen op m.m.borghouts@student.tue.nl 
+1. A script to generate unique tickets-codes, store them, and email them to participants.
+2. A script to host a website where the tickets can be scanned by people at the entrance of an event.
 
-Iedereen met een basis kennis van python zou dit systeem moeten 
-kunnen gebruiken en begrijpen. (Ik kan ook nog een keer proberen om het script wat de tickets verstuurd om te zetten naar een webpagina ipv een Python file. Voor de gebruiksvriendelijkheid)
+Additionally, there is a supporting Python file that can easily send SQL commands to the database for manual adjustments if needed.
 
-HOW TO: Tickets genereren---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Anyone with basic knowledge of Python should be able to use and understand this system. 
+If there are still any questions or uncertainties, you can always email me at m.m.borghouts@student.tue.nl.
 
-1.	Het eerste wat je moet doen is een Gmailadres vinden of aanmaken waarmee je de mails wilt verzenden. Om te zorgen dat dit python script in je Gmail kan inloggen en mails kan sturen 
-	moet je wat aanpassen in de instellingen van het Gmail account. Zie volgende post: https://stackoverflow.com/questions/72478573/sending-and-email-using-python-problem-causes-by-last-google-policy-update-on
-2.	Als je "verzender-Gmail" gereed is moet je vervolgens de inschrijvingslijst van een activiteit van de site downloaden als Excel bestand. Dit bestand moet je in het
-	mapje “EventTiks” zetten en je moet hem hernoemen naar "participants". De eerste rij van elke kolom moet aangeven wat er in de kolom staat (vgm is dit standaard al zo bij Prot.)
-3.	Vervolgens open je het "sending_tickets" script op je laptop met een editor zoals Spyder of VSCode. Je moet een aantal dingen in dit script aanpassen als je mails wilt zenden.
-	-Op line 30ish vul je de locatie (de folder op je latop) in waar de deelnemerslijst staat opgeslagen.
-	-Op line 62ish vul je in wat de sender-email is, dit is het Gmailadres wat de tickets gaat verzenden. 
-	-Op line 89 en 90ish vul je de et onderwerp en de inhoud van de mail in.
-4.	Zorg dat de database online is en dat je goed verbonden bent, als je kiest om een nieuwe database te maken.
-5.	Als je het script nu runt kan het zijn dat je nog wat packages moet instaleren als je die in je conda environment mist. (Een nieuwe environment aanmaken is geen slecht idee)
-6.	Als het script runt zonder errors dan vraagt hij om een wachtwoord. Dit is het 16 letterige wachtwoord je in stap 1 hebt aangemaakt. Zodra je een goed wachtwoord
-	intypt worden alle mails meteen verzonden! 
+**Todo:**
+- Convert the script that sends the tickets to a web page for better user-friendliness.
+- Convert to English.
+- Improve webpage layout now that AI tools have gotten so much better.
 
+## HOW TO: Generate Tickets
+1. Create a Gmail address from which you want to send the emails containig the tickets. Adjust the settings of this Gmail account so that the Python script is allowed to log in and send emails. See this post: [Stack Overflow link](https://stackoverflow.com/questions/72478573/how-to-send-an-email-using-python-after-googles-policy-update-on-not-allowing-j).
+2. Make an Excel file containg the information of all participants who should get a ticket in their mail. This exel file should have a name and email column with the column name in the first row. Place this Excel file in the “EventTiks” folder and rename it to "participants.xlsx".
+3. Open generate_tickets.py and do the user input in the first few lines
+4. Ensure the database is online,  use a free cloudbase database at [Clever Cloud](https://console.clever-cloud.com/)
+5. If the script runs without errors, it will prompt for a password. Enter the 16-character password you created in step 1. Once you enter the correct password, all emails will be sent immediately!
 
+## HOW TO: Verify Tickets
+To verify the tickets, you can run host_website_for_ticket_verification.py on your laptop or, even better, on a small computer like a Raspberry Pi. This can always be on, for example, in a locked cabinet. When you run the script, the computer will host the website. People at the door can log in with a username and password to verify ticket codes.
 
+1. The script should run immediately. Ensure the database connection is correct by checking the connection details.
+2. The script outputs an IP address where the website runs. To make the web server accessible from another location, such as the entrance of InVivo or the Villa, you need the external IP address and the corresponding port number of the Pi. Use "ipconfig" in your terminal to view IP addresses. Make the IP address static or adjust the port number via the modem. This is not possible at the university unless the intern of the board can arrange it. Most likely, the Pi will need to be placed at someone's home.
 
-HOW TO: Tickets Verifiëren-------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Voor het verifiëren van de tickets kun je het "run_website_for_checking_tickets" script runnen op je laptop of nog beter op een kleine computer die altijd aan kan staan zoals
-een Raspberry Pi aan de stroom ergens in een kastje met slot. Als je het script runt, dan host de computer die dat doet de website. Op deze website kunnen mensen aan de deur inloggen
-met een door mij bepaalde gebruikersnaam en wachtwoord. Eenmaal ingelogt kunnen ze de ticket codes invullen om te verifiëren of ze geldig zijn.  
-
-1. Het script runt als het goed is meteen. Je hoeft alleen te zorgen dat de database verbinding goed gaat door te checken of connectie gegevens nog kloppen.
-2. Het script output een IP-adress waarop de website runt. Echter willen we graag dat de webserver (de Raspberry Pi) bereikbaar is vanaf een andere locatie (de deur van InVivo of van
-   de Villa). Daarom hebben we het externe IP adress nodig van de Pi en het bijbehoorende port-nummer. IP-adressen kun je bekijken door "ipconfig in je terminal te typen". Om deze statisch
-   te maken (wat je wil) of om de port-nummer aan te passen heb je toegang tot de modem nodig. Dit is niet mogelijk op de uni, tenzij de Intern van het bestuur dat weet te fixen. Maar ik
-   vrees dat de Pi dus bij iemand thuis zal moeten staan.
-
-Voor het beheren van de raspberry-Pi (gelieve niet aan te komen tenzij je weet wat je doet):
-Dit werkt sws alleen vanaf mijn wifi in Woensel.
-1. verbinding maken met "  ssh pi@192.168.2.120  " en het wachtwoord is: raspberry
-2. cd EventTiks/
-3. python run_website_for_checking_tickets.py
-4. ctrl+z
-5. bg
-6. disown
-
-Met "sudo reboot" kan je heel de boel afsluiten/resetten en daarna dus weer opnieuw opstarten zoals hierboven.
-Echter heb ik nu een sh launcher scriptje toegevoegd die run_website.py automatisch starts bij een reboot.
-Dit heb ik gedaan met deze guide: https://www.instructables.com/Raspberry-Pi-Launch-Python-script-on-startup/
-Hierbij moest je bbt veranderen naar je eigen map naam en moet je de benodigde packages vanuit de root instaleren omdat ie daar vandaan boot.
-
-Als je changes maakt moet je wel de versie die op de raspberry pi staat updaten.
-kopieer de nieuwe versie naar downloads folder en run dan het volgende in cmd.
-Het wachtwoord is raspberry. Na het veranderen moet je rebooten. zodat de nieuwe versie begint met runnen:
-scp C:\Users\20192010\Downloads\run_website_for_checking_tickets.py pi@192.168.2.120:EventTiks/
