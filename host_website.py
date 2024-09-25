@@ -1,11 +1,13 @@
+from flask import Flask, request, render_template, redirect, url_for, session
+from flask_mysqldb import MySQL
+import pandas as pd
+import time
+
 """
 Ticket system 
 Created by Marijn Borghouts
 Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask-mysql/
 """
-
-from flask import Flask, request, render_template, redirect, url_for, session
-from flask_mysqldb import MySQL
 
 app = Flask(__name__)
 
@@ -21,9 +23,11 @@ app.config['MYSQL_PORT'] = 3306
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 mysql = MySQL(app)
 
+
+# Logic for the login page
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    errormsg=''
+    errormsg=""
     username=""
     password=""
     # If fields are filled in, create local variables
@@ -36,7 +40,9 @@ def login():
         So the session data can be passed to the home page to validate if the persons has logged in or not.
         This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
         """
-    if username == 'Marijn Borghouts' and password == 'PilsIsLekker35!': # Hardcoded valid account credentials
+    if username == 'Marijn' and password == 'Pils': # Hardcoded valid account credentials
+            
+            
             session['loggedin'] = True
             session['id'] = 1
             session['username'] = 'Marijn Borghouts'
@@ -47,14 +53,32 @@ def login():
     return render_template('loginpage.html', msg=errormsg)
 
 
-# This is just a placeholder page to always redirect a user to the login page. 
+# If the user tries to go to a subpage that does not exist, they get redirected to the login page
 @app.route('/')
 def reroute():
    return redirect(url_for('login'))
 
-# This is the code for the actual main page where the tickets can be checked.
+# Logic for the home page (3 buttons: choose to scan tickets, show tickets, send tickets)
 @app.route('/login/home', methods=['GET', 'POST'])
 def home():
+    # Check if user is logged in
+    if 'loggedin' in session:
+        if request.method == 'POST':
+            if 'scan_tickets' in request.form:
+                return redirect(url_for('scan_tickets'))
+            elif 'show_tickets' in request.form:
+                return redirect(url_for('show_tickets'))
+            elif 'send_tickets' in request.form:
+                return redirect(url_for('send_tickets'))
+        return render_template('home.html')
+    # if not logged in you get sent to login page
+    return redirect(url_for('login'))
+
+
+
+# Logic for ticket scanning page
+@app.route('/login/home/scan_tickets', methods=['GET', 'POST'])
+def scan_tickets():
     # Check if user is logged in then show main page
     if 'loggedin' in session:
         given_code=' '
@@ -86,20 +110,11 @@ def home():
                 color='red'
                 status='wrong (or has already been used).'
             mycursor.close()
-        return render_template('homepage.html', given_code=given_code, status=status, color=color)
+        return render_template('scan_tickets.html', given_code=given_code, status=status, color=color)
     # if not logged in you get send to login page.
     return redirect(url_for('login'))
 
-# Logout page where session variables are cleared
-# and immediatly after you are redirected to the login page. 
-@app.route('/login/logout')
-def logout():
-   session.pop('loggedin', None)
-   session.pop('id', None)
-   session.pop('username', None)
-   return redirect(url_for('login'))
-
-# Page which shows all tickets and validity
+# Logic for page that shows all the tickets in the database
 @app.route('/login/home/show_tickets', methods=['GET', 'POST'])
 def show_tickets():
     # Check if user is logged in 
@@ -121,9 +136,52 @@ def show_tickets():
             data_row.append(code)
             data_row.append(validity)
             data.append(data_row)     
-        return render_template('show_tickets_page.html', data=data)
+        return render_template('show_tickets.html', data=data)
             # If not logged in you get send to login page
     return redirect(url_for('login'))
+
+
+# Logic for the page that sends tickets to the database
+@app.route('/login/home/send_tickets', methods=['GET', 'POST'])
+def send_tickets():
+    # Check if user is logged in
+    if 'loggedin' in session:
+        # If the user has filled in the form then the info is stored in the database.
+        # assert 4 == 5, "This is an assertion error" # This works
+
+        if request.method == 'POST':
+            assert 4 == 5, "This is an assertion error" #
+            info = request.form
+            sender_email = info['sender_email']
+            excel_file = info['excel_file']
+            message = info['message']
+
+            assert message == "xxx", "The message is not xxx"
+            
+            
+            print("form was sumbitted at", time.time())
+            #load the uploaded file from the user
+            file = request.files['file']
+            # Read the xlsx file into a dataframe
+            df = pd.read_excel(file)
+             
+            # Process the dataframe as needed
+            # For example, you can iterate over the rows and insert them into the database
+            for index, row in df.iterrows():
+                name = row['name']
+                code = row['code']
+                valid = row['valid']
+                query = "INSERT INTO Tickets (name, code, valid) VALUES (%s, %s, %s)"
+                mycursor = mysql.connection.cursor()
+                mycursor.execute(query, (name, code, valid))
+                mysql.connection.commit()
+            mycursor.close()
+        return render_template('send_tickets.html')
+    # If not logged in you get send to login page
+    return redirect(url_for('login'))
+
+
+
 
 # Actually host the website on the specified IP adress and propper port.
 if __name__ == "__main__":

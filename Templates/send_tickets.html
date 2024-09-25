@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=0.8">
+    <link href="{{ url_for('static', filename='style_homepage.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body bgcolor={{color}}>
+    <div class="form-container">
+        <h1>Send Tickets</h1>
+        <form action="{{ url_for('send_tickets') }}" method="post" onsubmit="return confirm('Are you sure you want to submit?');">
+            <label for="sender_email">
+                <i class="fas fa-envelope"></i> Sender Email:
+            </label>
+            <input type="email" id="sender_email" name="sender_email" required>
+            <br><br>
+            <label for="excel_file">
+                <i class="fas fa-file-excel"></i> Upload Excel File:
+            </label>
+            <input type="file" id="excel_file" name="excel_file" accept=".xlsx, .xls" required>
+            <br><br>
+            <label for="message">
+                <i class="fas fa-comment"></i> Message:
+            </label>
+            <textarea id="message" name="message" rows="4" cols="50" required></textarea>
+            <br><br>
+            <input type="submit" value="Submit">
+        </form>
+        <center>
+            <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i> Home</a><br><br>
+        </center>
+    </div>
+</body>
+</html>
