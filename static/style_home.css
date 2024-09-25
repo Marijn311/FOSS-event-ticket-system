@@ -1,0 +1,93 @@
+/* General container styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f4f8; /* Soft background color */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 15px;
+}
+
+.home {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Title styling */
+h1 {
+    color: #2c3e50; /* Calming dark blue */
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+/* Button styling */
+form .btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #3498db; /* Calming blue */
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form .btn:hover {
+    background-color: #2980b9; /* Darker blue for hover */
+}
+
+form .btn:focus {
+    outline: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .home {
+        padding: 20px;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+
+    form .btn {
+        font-size: 14px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .home {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    form .btn {
+        font-size: 12px;
+        padding: 10px;
+    }
+}

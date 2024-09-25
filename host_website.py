@@ -1,7 +1,22 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_mysqldb import MySQL
 import pandas as pd
-import time
+import random
+import string
+import smtplib
+import mysql.connector # pip3 install mysql-connector-python-rf
+
+
+# todo add better comments
+# todo improve and update the readme
+# todo add better error handling
+# todo remove the hardcoded login credentials
+# todo add to the readme how to get a free db from clever cloud
+# todo add confirmation when the tickets have been send out
+# todo check if the login page cannot be skipped
+#todo ensure a safe https connection
+#todo add in readme a guide to https safe connection
+
 
 """
 Ticket system 
@@ -83,7 +98,7 @@ def scan_tickets():
     if 'loggedin' in session:
         given_code=' '
         status = ' '
-        color = 'grey'
+        color = 'white' 
         if request.method == "POST":
             # Fetch the info associated with the given code
             info = request.form
@@ -140,41 +155,87 @@ def show_tickets():
             # If not logged in you get send to login page
     return redirect(url_for('login'))
 
+# Generate random codes
+def generate_code():
+    """
+    With 3 letters in a code there are 26^3=17.576 possible combinations. 
+    # Assume a party or other activity has a maximum of 200 guests than one in 17.576/200=~88 codes are valid, 
+    # so guessing won't effectively work. It is always possible to change the code length to create more possible combinations. 
+    # Using letter codes instead of QR codes saves phone battery for the scanner. Besides, people can remember three letters
+    # so you do not need to wait for everyone to take out there phone at the door.
+    """
+    code_length = 3 
+    random_code = ''.join(random.choices(string.ascii_letters,k=code_length))
+    random_code = random_code.upper()
+    return random_code
+
+def send_emails(sender_email, password,subject, message, df):
+    # My specific 16 character password is: kyrgxwhgbpluclua
+    # Setup the email connection
+    with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number
+        smtp.ehlo()
+        smtp.starttls()
+        smtp.ehlo()
+        smtp.login(sender_email, password)
+        for i in range(len(df)):
+            receiver_email = df['Email'][i]
+            code = df['Code'][i]
+
+            #in message replace [Name] with the name of the person
+            message = message.replace('[Name]', df['Name'][i])
+            #in message replace [Code] with the code of the person
+            message = message.replace('[Code]', code)
+
+            email_content = f'Subject: {subject}\n\n{message}'
+            smtp.sendmail(sender_email, receiver_email, email_content)
+
+
+
+
+
 
 # Logic for the page that sends tickets to the database
 @app.route('/login/home/send_tickets', methods=['GET', 'POST'])
 def send_tickets():
     # Check if user is logged in
     if 'loggedin' in session:
-        # If the user has filled in the form then the info is stored in the database.
-        # assert 4 == 5, "This is an assertion error" # This works
-
+        # If the user has filled in the form, extract the info 
         if request.method == 'POST':
-            assert 4 == 5, "This is an assertion error" #
             info = request.form
             sender_email = info['sender_email']
             excel_file = info['excel_file']
+            subject = info['subject']
             message = info['message']
-
-            assert message == "xxx", "The message is not xxx"
-            
-            
-            print("form was sumbitted at", time.time())
-            #load the uploaded file from the user
-            file = request.files['file']
+            password = info['password']
+ 
             # Read the xlsx file into a dataframe
-            df = pd.read_excel(file)
-             
-            # Process the dataframe as needed
-            # For example, you can iterate over the rows and insert them into the database
-            for index, row in df.iterrows():
-                name = row['name']
-                code = row['code']
-                valid = row['valid']
-                query = "INSERT INTO Tickets (name, code, valid) VALUES (%s, %s, %s)"
+            df = pd.read_excel(excel_file)
+            #add a column to the dataframe that will contain the generated codes
+            df['Code'] = ''
+            used_codes = []
+            #loop through the dataframe and generate a code for each person
+            code = generate_code()
+            #Keep regenerating a random code until it is unique
+            while code in used_codes:
+                code = generate_code()
+            used_codes.append(code)
+            df['Code'] = code
+
+            # Add the created tickets to the database
+            for _, row in df.iterrows():
+                name = row['Name']
+                email = row['Email']
+                code = generate_code()
+                valid = 1 # All tickets are valid when they are send to the database
+                #add the newly generated ticket to the database
+                query = "INSERT INTO Tickets (name, email, code, valid) VALUES (%s, %s, %s, %s)"
                 mycursor = mysql.connection.cursor()
-                mycursor.execute(query, (name, code, valid))
+                mycursor.execute(query, (name, email, code, valid))
                 mysql.connection.commit()
+
+            # Send the emails with the tickets
+            send_emails(sender_email, password, subject, message, df)
+
             mycursor.close()
         return render_template('send_tickets.html')
     # If not logged in you get send to login page

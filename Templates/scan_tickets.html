@@ -1,34 +1,29 @@
-<HTML>
+<!DOCTYPE html>
+<html>
 <head>
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=0.8">
-    <link href="{{ url_for('static', filename='style_homepage.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='style_scan_tickets.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
     <!-- 
         CSS files need to be in the 'static' folder
     -->
 </head>
-<!-- 
-    Sadly, it seems to be the case that the keyboard cannot be automatically be pulled up on mobile phones.
-    The autofocus/onfocus command that I use is partly ignored by standard browsers on purpose.
-    The cursor IS placed in the specified field. But the browsers protect against pulling the keyboard on command,
-    to save loading time and prevent annoying spam websites from mis-using it.
--->
-<body bgcolor={{color}}>
-    <div class="login"> <!--I think that this <class> tag does a lot of the css styling. So perhaps change this name to make it clearer to read.-->
-        <h1>Enter Code</h1>
-        <div class="links">
+<body bgcolor="{{color}}">
+    <div class="container">
+        <div class="login">
+            <h1>Enter Code</h1>
+            <form autocomplete="off" action="{{ url_for('scan_tickets') }}" method="post">
+                <label for="3lettercode">
+                    <i class="fas fa-lock"></i> <!-- This is the lock icon -->
+                </label>
+                <input autofocus type="text" placeholder="3 Letter Code" id="3lettercode" name="fcode" required>
+                <div class="msg">The code "{{given_code}}" is {{status}}</div>
+                <input type="submit" value="Check" class="btn">
+            </form>
+            <center>
+                <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i> Home</a><br><br>
+            </center>
         </div>
-        <form autocomplete="off" action="{{ url_for('scan_tickets') }}" method="post">
-            <label for="username"> <!--I think that this <label> tag does a lot of the css styling. So perhaps change this name to make it clearer to read.-->
-                <i class="fas fa-lock"></i> <!--This is the lock icon-->
-            </label>
-            <input autofocus type="text" placeholder="3 Letter Code" id="3lettercode" name="fcode" required > <!--it used to be id="username"-->
-            <div class="msg">The code "{{given_code}}" is {{status}}</div>
-            <input type="submit" value="Check">
-        </form>
-        <center>
-            <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i> Home</a><br><br>
-        </center>
     </div>
 </body>
-</HTML>
+</html>
