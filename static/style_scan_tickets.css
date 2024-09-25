@@ -40,7 +40,10 @@ input[type="text"] {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    width: calc(100% - 40px); /* 100% width minus padding */
+    max-width: 300px; /* Optional: set a maximum width */
 }
+
 
 .btn:hover {
     background-color: #0056b3; /* Darker shade for hover effect */

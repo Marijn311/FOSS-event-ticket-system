@@ -16,7 +16,9 @@ import mysql.connector # pip3 install mysql-connector-python-rf
 # todo check if the login page cannot be skipped
 #todo ensure a safe https connection
 #todo add in readme a guide to https safe connection
-
+#todo add a clear table function to the database
+# todo fix the enters in the email message
+#fixme the name is not send propperly but the code is
 
 """
 Ticket system 
@@ -180,13 +182,14 @@ def send_emails(sender_email, password,subject, message, df):
         for i in range(len(df)):
             receiver_email = df['Email'][i]
             code = df['Code'][i]
+            name = df['Name'][i]
 
             #in message replace [Name] with the name of the person
-            message = message.replace('[Name]', df['Name'][i])
+            message_personal = message.replace('[Name]', name)
             #in message replace [Code] with the code of the person
-            message = message.replace('[Code]', code)
+            message_personal = message.replace('[Code]', code)
 
-            email_content = f'Subject: {subject}\n\n{message}'
+            email_content = f'Subject: {subject}\n\n{message_personal}'
             smtp.sendmail(sender_email, receiver_email, email_content)
 
 
@@ -214,18 +217,19 @@ def send_tickets():
             df['Code'] = ''
             used_codes = []
             #loop through the dataframe and generate a code for each person
-            code = generate_code()
-            #Keep regenerating a random code until it is unique
-            while code in used_codes:
-                code = generate_code()
-            used_codes.append(code)
-            df['Code'] = code
+            for i in range(len(df)):
+                df['Code'][i] = generate_code()
+                #Keep regenerating a random code until it is unique
+                while df['Code'][i] in used_codes:
+                    df['Code'][i] = generate_code()
+                used_codes.append(df['Code'][i])
+            
 
             # Add the created tickets to the database
             for _, row in df.iterrows():
                 name = row['Name']
                 email = row['Email']
-                code = generate_code()
+                code = row['Code']
                 valid = 1 # All tickets are valid when they are send to the database
                 #add the newly generated ticket to the database
                 query = "INSERT INTO Tickets (name, email, code, valid) VALUES (%s, %s, %s, %s)"
