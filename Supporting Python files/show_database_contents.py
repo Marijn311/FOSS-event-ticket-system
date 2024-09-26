@@ -1,8 +1,3 @@
-"""
-Ticket systeem 
-Made by Marijn Borghouts
-"""
-
 import mysql.connector #pip3 install mysql-connector-python-rf
 
 # Connect to database

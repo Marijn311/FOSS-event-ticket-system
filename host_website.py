@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
 import pandas as pd
 import random
 import string
 import smtplib
+from werkzeug.security import check_password_hash
 import mysql.connector # pip3 install mysql-connector-python-rf
 
 
@@ -12,24 +13,17 @@ import mysql.connector # pip3 install mysql-connector-python-rf
 # todo add better error handling
 # todo remove the hardcoded login credentials
 # todo add to the readme how to get a free db from clever cloud
-# todo add confirmation when the tickets have been send out
-# todo check if the login page cannot be skipped
 #todo ensure a safe https connection
 #todo add in readme a guide to https safe connection
-#todo add a clear table function to the database
+
 # todo fix the enters in the email message
 #fixme the name is not send propperly but the code is
 
-"""
-Ticket system 
-Created by Marijn Borghouts
-Heavy inspiration was taken form: https://codeshack.io/login-system-python-flask-mysql/
-"""
-
 app = Flask(__name__)
 
-# Secret key for extra protection. (I forgot how this worked though)
-app.secret_key = '33PilsIsLekker35'
+# Secret key for extra protection. This is needed to create session variables, todo please change this.
+app.secret_key = '%8865Hjmnfd7F4Nkhkk'
+
 
 # Connect to the database
 app.config['MYSQL_USER'] ="u0rzyyrzeczuua0e"
@@ -47,24 +41,35 @@ def login():
     errormsg=""
     username=""
     password=""
-    # If fields are filled in, create local variables
+    
+    """ 
+    Create session data if credentials are valid
+    Session variables basically act like browser cookies. They are stored on the webserver as opposed to the user's browser.
+    So the session data can be passed to the home page to validate if the persons has logged in or not.
+    This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
+    """
+
+    #fixme the only valid account now is user1, password1
+
+
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']    
-        """ 
-        Create session data if credentials are valid
-        Session variables basically act like browser cookies. They are stored on the webserver as opposed to the user's browser.
-        So the session data can be passed to the home page to validate if the persons has logged in or not.
-        This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
-        """
-    if username == 'Marijn' and password == 'Pils': # Hardcoded valid account credentials
-            
-            
+
+        # Check if the username and password combination is valid in the database
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM Accounts WHERE username = %s', (username,))
+        account = cursor.fetchone()
+        cursor.close()
+
+        # If the account exists and the password is correct, the login is valid and the session variables are set
+        if account and check_password_hash(account['password'], password):
             session['loggedin'] = True
-            session['id'] = 1
-            session['username'] = 'Marijn Borghouts'
-            # Redirect to home page if login was valid (if the session variables exist)
-            return redirect(url_for('home'))
+            session['id'] = account['id']
+            session['username'] = account['username']
+
+        # Redirect to home page if login was valid (if the session variables exist)
+        return redirect(url_for('home'))
     else:
             errormsg = 'Incorrect username/password!'
     return render_template('loginpage.html', msg=errormsg)
@@ -192,6 +197,8 @@ def send_emails(sender_email, password,subject, message, df):
             email_content = f'Subject: {subject}\n\n{message_personal}'
             smtp.sendmail(sender_email, receiver_email, email_content)
 
+        # Flash confirmation message
+        flash('Tickets have been successfully sent to all recipients!', 'success')   
 
 
 
@@ -202,6 +209,8 @@ def send_emails(sender_email, password,subject, message, df):
 def send_tickets():
     # Check if user is logged in
     if 'loggedin' in session:
+        # Flash empty message
+        flash(' ', 'success')  
         # If the user has filled in the form, extract the info 
         if request.method == 'POST':
             info = request.form
@@ -211,6 +220,13 @@ def send_tickets():
             message = info['message']
             password = info['password']
  
+            # Clear out the Tickets table before filling it again 
+            mycursor = mysql.connection.cursor()
+            query = "DELETE FROM Tickets WHERE valid!=5"
+            mycursor.execute(query)
+            mysql.connection.commit()
+            mycursor.close()
+
             # Read the xlsx file into a dataframe
             df = pd.read_excel(excel_file)
             #add a column to the dataframe that will contain the generated codes

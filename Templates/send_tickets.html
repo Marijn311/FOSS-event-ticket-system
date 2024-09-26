@@ -10,7 +10,21 @@
     <div class="container">
         <div class="form-container">
             <h1>Send Tickets</h1>
-            <form action="{{ url_for('send_tickets') }}" method="post" onsubmit="return confirm('ARE YOU SURE? Clicking OK will send an email to every email address in the provided spreadsheet.');">
+
+            <!-- Add flash message display here -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="flash-messages">
+                  {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                      {{ message }}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('send_tickets') }}" method="post" onsubmit="return confirm('ARE YOU SURE? Clicking OK will send an email to every email address in the provided spreadsheet AND delete all the old tickets.');">
                 
                 <label for="sender_email">
                     <i class="fas fa-envelope"></i> Sender Email:
@@ -42,6 +56,7 @@
             <div class="center">
                 <a href="{{ url_for('home') }}"><i class="fas fa-sign-out-alt"></i> Home</a><br><br>
             </div>
+            
         </div>
     </div>
 </body>

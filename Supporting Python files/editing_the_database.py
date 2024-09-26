@@ -1,8 +1,3 @@
-"""
-Ticket systeem 
-Made by Marijn Borghouts
-"""
-
 import random 
 import string
 import smtplib
@@ -25,11 +20,45 @@ mycursor = mydb.cursor(buffered=True)
 
 #-------------------The following commands can be selectively uncommented to augment the database-------------------------------------------------------
 
-# Clear out the Tickets table before filling it again 
-query = "DELETE FROM Tickets WHERE valid!=5"
+# # Show all tables in the database
+# query = "SHOW TABLES"
+# mycursor.execute(query)
+# tables = mycursor.fetchall()
+# for table in tables:
+#   print(table)
+
+
+# # Add an entry to the Accounts table
+# username = "user1"
+# password = "password1"
+# hashed_password = generate_password_hash(password)
+
+# query = "INSERT INTO Accounts (username, password) VALUES (%s, %s)"
+# val = (username, hashed_password)
+# mycursor.execute(query, val)
+# mydb.commit()
+
+
+# # Show all columns in the Accounts table
+# query = "SHOW COLUMNS FROM Accounts"
+# mycursor.execute(query)
+# columns = mycursor.fetchall()
+# for column in columns:
+#   print(column)
+
+
+# Show all entries in the Accounts table
+query = "SELECT * FROM Accounts"
 mycursor.execute(query)
-mydb.commit()
-print("Cleared out the tickets table")
+accounts = mycursor.fetchall()
+for account in accounts:
+  print(account)
+
+# # Clear out the Tickets table before filling it again 
+# query = "DELETE FROM Tickets WHERE valid!=5"
+# mycursor.execute(query)
+# mydb.commit()
+# print("Cleared out the tickets table")
 
 # # Delete table called Tickets
 # query = "DROP TABLE Tickets"
