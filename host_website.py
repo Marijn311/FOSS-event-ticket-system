@@ -1,31 +1,34 @@
 from flask import Flask, request, render_template, redirect, url_for, session, flash
 from flask_mysqldb import MySQL
 import pandas as pd
-import random
-import string
-import smtplib
+from utils import generate_code, send_emails
 from werkzeug.security import check_password_hash
 import mysql.connector # pip3 install mysql-connector-python-rf
 
 
-# todo add better comments
 # todo improve and update the readme
-# todo add better error handling
 # todo remove the hardcoded login credentials
 # todo add to the readme how to get a free db from clever cloud
 #todo ensure a safe https connection
 #todo add in readme a guide to https safe connection
-
+#imp[rove the docs at the bottom of this page. ]
 # todo fix the enters in the email message
-#fixme the name is not send propperly but the code is
+#todo the name is not send propperly but the code is
 
 app = Flask(__name__)
 
-# Secret key for extra protection. This is needed to create session variables, todo please change this.
-app.secret_key = '%8865Hjmnfd7F4Nkhkk'
+
+""" 
+The secret_key in a Flask application is used for securely signing the session cookie 
+and other security-related needs.
+This ensures that the data stored in the session cookie cannot be tampered with by the client. 
+If someone tries to modify the session data, Flask will detect it because
+the signature will no longer match.
+""" 
+app.secret_key = '%8865Hjmnfd7F4N*khkk'
 
 
-# Connect to the database
+# Connect to the database (I use a free dev package from clever cloud)
 app.config['MYSQL_USER'] ="u0rzyyrzeczuua0e"
 app.config['MYSQL_PASSWORD'] = "0gAOcli6gNMMMn3zzz31"
 app.config['MYSQL_HOST'] = "balbwuq2vgphmafftda4-mysql.services.clever-cloud.com"
@@ -49,9 +52,9 @@ def login():
     This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
     """
 
-    #fixme the only valid account now is user1, password1
+    #todo the only valid account now is user1, password1
 
-
+    # If a username and password are submitted: 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']    
@@ -86,6 +89,7 @@ def home():
     # Check if user is logged in
     if 'loggedin' in session:
         if request.method == 'POST':
+            # Based on the button pressed, redirect to the corresponding page
             if 'scan_tickets' in request.form:
                 return redirect(url_for('scan_tickets'))
             elif 'show_tickets' in request.form:
@@ -93,24 +97,21 @@ def home():
             elif 'send_tickets' in request.form:
                 return redirect(url_for('send_tickets'))
         return render_template('home.html')
-    # if not logged in you get sent to login page
     return redirect(url_for('login'))
-
-
 
 # Logic for ticket scanning page
 @app.route('/login/home/scan_tickets', methods=['GET', 'POST'])
 def scan_tickets():
-    # Check if user is logged in then show main page
     if 'loggedin' in session:
         given_code=' '
         status = ' '
         color = 'white' 
         if request.method == "POST":
-            # Fetch the info associated with the given code
+            # Extract the entered code
             info = request.form
             given_code = info['fcode']
             mycursor = mysql.connection.cursor()
+            # Extract the row in the database that corresponds to the given code
             query="SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
             mycursor.execute(query)
             mysql.connection.commit()
@@ -118,36 +119,34 @@ def scan_tickets():
             # 'result' is one long string with the query and the result in it.
             # The fourth-from-last character is the actual boolean status of the ticket validity.
             if result[-4] == '1':    
-                # If the given code is valid then a guest has been admitted.
-                # Now we need to update the validity of the code in the database, 
-                # else everyone could use the same ticket.
+                # If the given code is valid
+                # Update the validity of the code in the database
                 query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
                 mycursor.execute(query)
                 mysql.connection.commit()
-                color='green' 
-                status='valid!'
                 # Color and status are active variables which are passed to the hmtl file
                 # to dynamically update how the page looks. 
+                color='green' 
+                status='valid!'
             else:
                 color='red'
                 status='wrong (or has already been used).'
             mycursor.close()
         return render_template('scan_tickets.html', given_code=given_code, status=status, color=color)
-    # if not logged in you get send to login page.
     return redirect(url_for('login'))
 
 # Logic for page that shows all the tickets in the database
 @app.route('/login/home/show_tickets', methods=['GET', 'POST'])
 def show_tickets():
-    # Check if user is logged in 
     if 'loggedin' in session:
         # Print all the tickets that are in the database.
         query = "SELECT * FROM Tickets ORDER BY name ASC"
         mycursor = mysql.connection.cursor()
         mycursor.execute(query)
         mysql.connection.commit()
-        result = mycursor.fetchall() # Result is a tuple filled with dictionaries,
-        # the following loop restructers only relevant info into a list of lists. 
+        result = mycursor.fetchall() # Result is a tuple filled with dictionaries
+        # The following loop restructers only relevant info into a list of lists.
+        # This list of lists is used to display the data in the html file. 
         data = []
         for row in result:
             data_row = []
@@ -159,60 +158,15 @@ def show_tickets():
             data_row.append(validity)
             data.append(data_row)     
         return render_template('show_tickets.html', data=data)
-            # If not logged in you get send to login page
     return redirect(url_for('login'))
-
-# Generate random codes
-def generate_code():
-    """
-    With 3 letters in a code there are 26^3=17.576 possible combinations. 
-    # Assume a party or other activity has a maximum of 200 guests than one in 17.576/200=~88 codes are valid, 
-    # so guessing won't effectively work. It is always possible to change the code length to create more possible combinations. 
-    # Using letter codes instead of QR codes saves phone battery for the scanner. Besides, people can remember three letters
-    # so you do not need to wait for everyone to take out there phone at the door.
-    """
-    code_length = 3 
-    random_code = ''.join(random.choices(string.ascii_letters,k=code_length))
-    random_code = random_code.upper()
-    return random_code
-
-def send_emails(sender_email, password,subject, message, df):
-    # My specific 16 character password is: kyrgxwhgbpluclua
-    # Setup the email connection
-    with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number
-        smtp.ehlo()
-        smtp.starttls()
-        smtp.ehlo()
-        smtp.login(sender_email, password)
-        for i in range(len(df)):
-            receiver_email = df['Email'][i]
-            code = df['Code'][i]
-            name = df['Name'][i]
-
-            #in message replace [Name] with the name of the person
-            message_personal = message.replace('[Name]', name)
-            #in message replace [Code] with the code of the person
-            message_personal = message.replace('[Code]', code)
-
-            email_content = f'Subject: {subject}\n\n{message_personal}'
-            smtp.sendmail(sender_email, receiver_email, email_content)
-
-        # Flash confirmation message
-        flash('Tickets have been successfully sent to all recipients!', 'success')   
-
-
-
 
 
 # Logic for the page that sends tickets to the database
 @app.route('/login/home/send_tickets', methods=['GET', 'POST'])
 def send_tickets():
-    # Check if user is logged in
     if 'loggedin' in session:
-        # Flash empty message
-        flash(' ', 'success')  
-        # If the user has filled in the form, extract the info 
         if request.method == 'POST':
+        # Extract the info which is submitted by the user in the form 
             info = request.form
             sender_email = info['sender_email']
             excel_file = info['excel_file']
@@ -229,25 +183,25 @@ def send_tickets():
 
             # Read the xlsx file into a dataframe
             df = pd.read_excel(excel_file)
-            #add a column to the dataframe that will contain the generated codes
+            
+            #Add a column to the dataframe that will contain the generated codes
             df['Code'] = ''
+            
+            # Loop through the dataframe and generate a code for each person
             used_codes = []
-            #loop through the dataframe and generate a code for each person
             for i in range(len(df)):
                 df['Code'][i] = generate_code()
-                #Keep regenerating a random code until it is unique
+                # Keep regenerating a random code until it is unique
                 while df['Code'][i] in used_codes:
                     df['Code'][i] = generate_code()
-                used_codes.append(df['Code'][i])
-            
+                used_codes.append(df['Code'][i]) # To keep track of the codes that have been given out
 
             # Add the created tickets to the database
             for _, row in df.iterrows():
                 name = row['Name']
                 email = row['Email']
                 code = row['Code']
-                valid = 1 # All tickets are valid when they are send to the database
-                #add the newly generated ticket to the database
+                valid = 1 
                 query = "INSERT INTO Tickets (name, email, code, valid) VALUES (%s, %s, %s, %s)"
                 mycursor = mysql.connection.cursor()
                 mycursor.execute(query, (name, email, code, valid))
@@ -258,16 +212,20 @@ def send_tickets():
 
             mycursor.close()
         return render_template('send_tickets.html')
-    # If not logged in you get send to login page
     return redirect(url_for('login'))
 
 
-
-
-# Actually host the website on the specified IP adress and propper port.
+# This allows you to host the website your own pc (local hosts). So that you can test the website when youmake changes or are developping it.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8181)
 
+# Below is a description of how you can run this website permanently (on the internet).
+# In other for this website to work it needs to be hosted on a server.
+# A server is a computer that is always on, that is always connected to the internet, and that is always running this script.
+# There are many ways to host a website, but the easiest way is to use a cloud service. But this is not free.
+# The best alternative is to use a old or unused computer as a server, that is stuffed away in a corner somewhere, always on.
+# This is called a home server. You can even use a raspberry pi as a server, since this is basically a small computer.
+# Below describes how to host the website on a home server.
 
 
 """ 
