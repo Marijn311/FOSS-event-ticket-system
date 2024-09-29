@@ -19,7 +19,7 @@ def generate_code():
 
 
 
-def send_emails(sender_email, password,subject, message, df):
+def send_emails(sender_email, password, subject, message, df):
     """
     Sends personalized emails to a list of recipients.
     Args:
@@ -33,8 +33,6 @@ def send_emails(sender_email, password,subject, message, df):
     Raises:
         smtplib.SMTPException: If there is an error with the SMTP connection or sending the email.
     """
-    # My specific 16 character password is: 
-    # #TODO kyrgxwhgbpluclua
 
     # Setup the email connection
     with smtplib.SMTP('smtp.gmail.com', 587) as smtp: #587 is the port number
@@ -50,7 +48,7 @@ def send_emails(sender_email, password,subject, message, df):
             # In message replace [Name] with the name of the person
             message_personal = message.replace('[Name]', name)
             # In message replace [Code] with the code of the person
-            message_personal = message.replace('[Code]', code)
+            message_personal = message_personal.replace('[Code]', code)
 
             email_content = f'Subject: {subject}\n\n{message_personal}'
             smtp.sendmail(sender_email, receiver_email, email_content)

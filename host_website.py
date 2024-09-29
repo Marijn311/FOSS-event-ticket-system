@@ -3,18 +3,11 @@ from flask_mysqldb import MySQL
 import pandas as pd
 from utils import generate_code, send_emails
 from werkzeug.security import check_password_hash
-import mysql.connector # pip3 install mysql-connector-python-rf
+import mysql.connector 
 
 
-# todo improve and update the readme
-# todo remove the hardcoded login credentials
-# todo add to the readme how to get a free db from clever cloud
 #todo ensure a safe https connection
 #todo add in readme a guide to https safe connection
-#imp[rove the docs at the bottom of this page. ]
-# todo fix the enters in the email message
-#todo the name is not send propperly but the code is
-
 app = Flask(__name__)
 
 
@@ -25,16 +18,16 @@ This ensures that the data stored in the session cookie cannot be tampered with 
 If someone tries to modify the session data, Flask will detect it because
 the signature will no longer match.
 """ 
-app.secret_key = '%8865Hjmnfd7F4N*khkk'
+app.secret_key = 'placeholder'
 
 
 # Connect to the database (I use a free dev package from clever cloud)
-app.config['MYSQL_USER'] ="u0rzyyrzeczuua0e"
-app.config['MYSQL_PASSWORD'] = "0gAOcli6gNMMMn3zzz31"
-app.config['MYSQL_HOST'] = "balbwuq2vgphmafftda4-mysql.services.clever-cloud.com"
-app.config['MYSQL_DB'] = "balbwuq2vgphmafftda4"
-app.config['MYSQL_PORT'] = 3306
-app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
+app.config['MYSQL_USER'] ="placeholder"
+app.config['MYSQL_PASSWORD'] = "placeholder"
+app.config['MYSQL_HOST'] = "placeholder-mysql.services.clever-cloud.com"
+app.config['MYSQL_DB'] = "placeholder"
+app.config['MYSQL_PORT'] = placeholder
+app.config['MYSQL_CURSORCLASS'] = 'placeholder'
 mysql = MySQL(app)
 
 
@@ -51,8 +44,6 @@ def login():
     So the session data can be passed to the home page to validate if the persons has logged in or not.
     This prevents "hackers" from just navigating to http/IP/login/home and skipping the login step.
     """
-
-    #todo the only valid account now is user1, password1
 
     # If a username and password are submitted: 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
@@ -215,33 +206,8 @@ def send_tickets():
     return redirect(url_for('login'))
 
 
-# This allows you to host the website your own pc (local hosts). So that you can test the website when youmake changes or are developping it.
+# This allows you to host the website your own pc (local hosts). 
+# So that you can test the website when you make changes or are developing it.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8181)
 
-# Below is a description of how you can run this website permanently (on the internet).
-# In other for this website to work it needs to be hosted on a server.
-# A server is a computer that is always on, that is always connected to the internet, and that is always running this script.
-# There are many ways to host a website, but the easiest way is to use a cloud service. But this is not free.
-# The best alternative is to use a old or unused computer as a server, that is stuffed away in a corner somewhere, always on.
-# This is called a home server. You can even use a raspberry pi as a server, since this is basically a small computer.
-# Below describes how to host the website on a home server.
-
-
-""" 
-###EIGEN AANTEKENINGEN###
-
--Als je 'ipconfig' in je terminal typt dan kun je, je IP adressen zien. 
-IPv4 is je eigen laptops "interne" IP adress wat je apparaten van je modem krijgen als ze op de wifi zitten.
-De default gateway is het "externe" IP adress (het adress van je modem zelf).
-Als je iemand van buiten af (buiten de wifi waarop deze website runt) op de website wil laten,
-heb je het externe IP adress nodig (om naar de modem te komen) en het goede port nummer (om naar het goede apparaat te komen). 
-LET OP dat deze adressen kunnen veranderen, zelfs binnnen je eigen netwerk, dit is onhandig.
-Als je deze in je browser je "default gateway" gooit ga je naar de website van je provider.
-Hier kan je de 'port forward' en IP adress instellen en vastzetten zodat hij niet meer veranderd.
-Het probleem is dat je deze website wss niet op de uni kan runnen. Want wij kunnen niet bij de modem instellingen van de TU/e.
-En een intern Ip gebruiken werkt misschien ook niet omdat die wss door de firewall geblokkeerd wordt.
-En dan werkt de site alleen als je op de uni bent, en dus niet bij de Villa.
-
-
-"""
