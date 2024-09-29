@@ -46,15 +46,12 @@ All you need is a simple computer (e.g., an old PC, laptop, or Raspberry Pi) to 
 To host the web app, all you need is a basic computer or a micro-computer like a Raspberry Pi. Follow the steps below to set it up:
 
 1. **Clone the Repository**  
-   \`\`\`bash
    git clone https://github.com/your-repo/event-ticket-manager.git
-   \`\`\`
+   
 
 2. **Install Dependencies**  
-   Ensure you have Python and the required packages installed:
-   \`\`\`bash
-   pip install -r requirements.txt
-   \`\`\`
+   - Ensure you have Python and the required packages installed:
+   
 
 3. **Set Up Database**  
    - The app uses a cloud-based database, so no local setup is required.
@@ -62,21 +59,19 @@ To host the web app, all you need is a basic computer or a micro-computer like a
    - Ensure your database credentials are configured at the top of the host_website script.
 
 4. **Run the Web App**  
-   \`\`\`bash
-   python host_website.py
-   \`\`\`
-
+   - python3 host_website.py
+   
 5. **Port Forwarding**  
    - If you want the app to be accessible externally, you need to configure port forwarding on your router.
    - Access your router settings and forward the appropriate port to the device hosting the app.  
    - You may also want to set up a static internal IP address to ensure your device's IP doesn’t change.
 
 6. **Gmail Automation Code**
-In order to allow third parties (Python scripts) to acces your Gmail account to send automated emails you need to change some settings and enter an extra code. See the following stack overflow link.
+   - In order to allow third parties (Python scripts) to acces your Gmail account to send automated emails you need to change some settings and enter an extra code. See the following stack overflow link.
 (https://stackoverflow.com/questions/72478573/how-to-send-an-email-using-python-after-googles-policy-update-on-not-allowing-j)
 
 7. **Secure HTTPS connection**
-Make sure you use secure connections if you want to deploy this irl.
+   - Make sure you use secure connections if you want to deploy this irl.
 
 
 ## Manual Database Adjustments
