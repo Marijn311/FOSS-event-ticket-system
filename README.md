@@ -1,4 +1,3 @@
-
 # Event Ticket Manager
 
 This is a hobby project that originated from my need for a free app to send and scan event tickets. I couldn't find a suitable free app with the features I needed, so I decided to develop one myself. Everything is web-based, and the code is freely available for anyone to use, modify, and host.
@@ -77,4 +76,85 @@ To host the web app, all you need is a basic computer or a micro-computer like a
 ## Manual Database Adjustments
 
 A supporting Python file allows you to manually send SQL commands to the database for advanced operations, such as modifying ticket data or user permissions.
+
+
+# Setting up a Free Domain and SSL Certificate
+
+This guide will walk you through the process of setting up a free domain name with DuckDNS and obtaining a free SSL certificate from Let's Encrypt for your Raspberry Pi web server.
+
+## 1. Getting a Free Domain with DuckDNS
+
+1. Go to [DuckDNS](https://www.duckdns.org/) and sign in using your preferred method (Google, GitHub, etc.).
+
+2. Once logged in, you'll see a field to enter a subdomain. Choose a name and check its availability.
+
+3. Click "add domain" to create your free domain (e.g., `yourname.duckdns.org`).
+
+4. Note down the token provided by DuckDNS. You'll need this to update your IP address.
+
+5. On your Raspberry Pi, create a script to update your IP address:
+
+   ```bash
+   sudo nano /usr/local/bin/duckdns-update.sh
+   ```
+
+   Add the following content (replace with your details):
+
+   ```bash
+   #!/bin/bash
+   echo url="https://www.duckdns.org/update?domains=yourname&token=YOUR_TOKEN&ip=" | curl -k -o ~/duckdns/duck.log -K -
+   ```
+
+6. Make the script executable:
+
+   ```bash
+   sudo chmod 700 /usr/local/bin/duckdns-update.sh
+   ```
+
+7. Set up a cron job to run this script every 5 minutes:
+
+   ```bash
+   sudo crontab -e
+   ```
+
+   Add this line:
+
+   ```bash
+   */5 * * * * /usr/local/bin/duckdns-update.sh >/dev/null 2>&1
+   ```
+
+## 2. Obtaining a Free SSL Certificate with Let's Encrypt
+
+1. Install Certbot (Let's Encrypt client) on your Raspberry Pi:
+
+   ```bash
+   sudo apt-get update
+   sudo apt-get install certbot
+   ```
+
+2. Obtain the SSL certificate:
+
+   ```bash
+   sudo certbot certonly --standalone -d yourname.duckdns.org
+   ```
+
+   Follow the prompts to complete the process.
+
+3. Your certificates will be stored in `/etc/letsencrypt/live/yourname.duckdns.org/`.
+
+4. Set up auto-renewal:
+
+   ```bash
+   sudo crontab -e
+   ```
+
+   Add this line to renew the certificate twice daily:
+
+   ```bash
+   0 */12 * * * certbot renew --quiet
+   ```
+
+## 3. Configuring The Flask App
+
+Update your Flask application to use the new SSL certificate:
 

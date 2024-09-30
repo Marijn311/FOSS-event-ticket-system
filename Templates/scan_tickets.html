@@ -4,15 +4,12 @@
     <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=0.8">
     <link href="{{ url_for('static', filename='style_scan_tickets.css') }}" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-    <!-- 
-        CSS files need to be in the 'static' folder
-    -->
     <script>
         function resetBackgroundColor() {
-            if ({{ reset_color|tojson }}) { // the IDE falsely recognizes this as a syntax error, but it works
+            if ({{ reset_color|tojson }}) {
                 setTimeout(function() {
                     document.body.style.backgroundColor = 'white';
-                }, 2000); // Add a delay of 2 seconds (2000 milliseconds)
+                }, 2000);
             }
         }
     </script>
@@ -21,12 +18,19 @@
     <div class="container">
         <div class="login">
             <h1>Enter Code</h1>
+            <!-- Add flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             <form autocomplete="off" action="{{ url_for('scan_tickets') }}" method="post">
                 <label for="3lettercode">
-                    <i class="fas fa-lock"></i> <!-- This is the lock icon -->
+                    <i class="fas fa-lock"></i>
                 </label>
                 <input autofocus type="text" placeholder="3 Letter Code" id="3lettercode" name="fcode" required>
-                <div class="msg">The code "{{given_code}}" is {{status}}</div>
                 <input type="submit" value="Check" class="btn">
             </form>
             <center>

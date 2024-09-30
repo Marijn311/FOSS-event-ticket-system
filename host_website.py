@@ -4,12 +4,14 @@ import pandas as pd
 from utils import generate_code, send_emails
 from werkzeug.security import check_password_hash
 import mysql.connector 
+import os
+import MySQLdb
+import re  
+from flask import flash  
+import ssl
 
 
-#todo ensure a safe https connection
-#todo add in readme a guide to https safe connection
 app = Flask(__name__)
-
 
 """ 
 The secret_key in a Flask application is used for securely signing the session cookie 
@@ -18,25 +20,44 @@ This ensures that the data stored in the session cookie cannot be tampered with 
 If someone tries to modify the session data, Flask will detect it because
 the signature will no longer match.
 """ 
-app.secret_key = 'placeholder'
+app.secret_key = os.environ.get('SECRET_KEY')
 
+# Replace the MySQL configuration block with this:
+app.config['MYSQL_HOST'] = os.environ.get('MYSQL_HOST')
+app.config['MYSQL_USER'] = os.environ.get('MYSQL_USER')
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD')
+app.config['MYSQL_DB'] = os.environ.get('MYSQL_DB')
+app.config['MYSQL_PORT'] = int(os.environ.get('MYSQL_PORT', 3306))
 
-# Connect to the database (I use a free dev package from clever cloud)
-app.config['MYSQL_USER'] ="placeholder"
-app.config['MYSQL_PASSWORD'] = "placeholder"
-app.config['MYSQL_HOST'] = "placeholder-mysql.services.clever-cloud.com"
-app.config['MYSQL_DB'] = "placeholder"
-app.config['MYSQL_PORT'] = placeholder
-app.config['MYSQL_CURSORCLASS'] = 'placeholder'
+# Now, let's create a dictionary of our connection parameters
+db_config = {
+    'host': os.environ.get('MYSQL_HOST'),
+    'user': os.environ.get('MYSQL_USER'),
+    'password': os.environ.get('MYSQL_PASSWORD'),
+    'database': os.environ.get('MYSQL_DB'),
+    'port': int(os.environ.get('MYSQL_PORT', 3306))
+}
+
+# Try to establish a connection
+try:
+    connection = MySQLdb.connect(**db_config)
+    print("Successfully connected to the database")
+    connection.close()
+except MySQLdb.Error as e:
+    print(f"Error connecting to MySQL Platform: {e}")
+    print(f"Error: {e.args[0]}, {e.args[1]}")
+
+# Initialize MySQL
 mysql = MySQL(app)
+
 
 
 # Logic for the login page
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
-    errormsg=""
-    username=""
-    password=""
+    errormsg = ""
+    username = ""
+    password = ""
     
     """ 
     Create session data if credentials are valid
@@ -50,22 +71,25 @@ def login():
         username = request.form['username']
         password = request.form['password']    
 
-        # Check if the username and password combination is valid in the database
-        cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM Accounts WHERE username = %s', (username,))
-        account = cursor.fetchone()
-        cursor.close()
+        # Input validation (to protect against sql injection)
+        if not re.match(r'^[A-Za-z0-9_]+$', username):
+            errormsg = 'Username must contain only letters, numbers, and underscores!'
+        else:
+            # get the account info from the database
+            cursor = mysql.connection.cursor()
+            cursor.execute('SELECT * FROM Accounts WHERE username = %s', (username,))
+            account = cursor.fetchone()
+            cursor.close()
 
-        # If the account exists and the password is correct, the login is valid and the session variables are set
-        if account and check_password_hash(account['password'], password):
-            session['loggedin'] = True
-            session['id'] = account['id']
-            session['username'] = account['username']
+            # check if the password is correct, if so set the session variables
+            if account and check_password_hash(account[2], password):
+                session['loggedin'] = True
+                session['id'] = account[0]
+                session['username'] = account[1]
+                return redirect(url_for('home'))
+            else:
+                errormsg = 'Incorrect username/password!'
 
-        # Redirect to home page if login was valid (if the session variables exist)
-        return redirect(url_for('home'))
-    else:
-            errormsg = 'Incorrect username/password!'
     return render_template('loginpage.html', msg=errormsg)
 
 
@@ -94,39 +118,35 @@ def home():
 @app.route('/login/home/scan_tickets', methods=['GET', 'POST'])
 def scan_tickets():
     if 'loggedin' in session:
-        given_code = ' '
-        status = ' '
-        color = 'white'
         reset_color = False
+        color = 'white'
+        given_code = ''
         if request.method == "POST":
-            # Extract the entered code
-            info = request.form
-            given_code = info['fcode']
-            mycursor = mysql.connection.cursor()
-            # Extract the row in the database that corresponds to the given code
-            query = "SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
-            mycursor.execute(query)
-            mysql.connection.commit()
-            result = str(mycursor.fetchall())
-            # 'result' is one long string with the query and the result in it.
-            # The fourth-from-last character is the actual boolean status of the ticket validity.
-            if result[-4] == '1':    
-                # If the given code is valid
-                # Update the validity of the code in the database
-                query = "UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
-                mycursor.execute(query)
-                mysql.connection.commit()
-                # Color and status are active variables which are passed to the hmtl file
-                # to dynamically update how the page looks. 
-                color = 'green' 
-                status = 'valid!'
+            given_code = request.form['fcode']
+            
+            if not re.match(r'^[A-Za-z]+$', given_code):
+                flash('Invalid code format. Only letters are allowed.', 'error')
+                color = 'red'
                 reset_color = True
             else:
-                color = 'red'
-                status = 'wrong (or has already been used).'
-                reset_color = True
-            mycursor.close()
-        return render_template('scan_tickets.html', given_code=given_code, status=status, color=color, reset_color=reset_color)
+                mycursor = mysql.connection.cursor()
+                query = "SELECT EXISTS(SELECT * FROM Tickets WHERE code = %s AND valid = 1)"
+                mycursor.execute(query, (given_code,))
+                result = mycursor.fetchone()
+                
+                if result[0] == 1:
+                    query = "UPDATE Tickets SET valid = 0 WHERE code = %s"
+                    mycursor.execute(query, (given_code,))
+                    mysql.connection.commit()
+                    flash(f'The code "{given_code}" is valid!', 'success')
+                    color = 'green'
+                    reset_color = True
+                else:
+                    flash(f'The code "{given_code}" is wrong (or has already been used).', 'error')
+                    color = 'red'
+                    reset_color = True
+                mycursor.close()
+        return render_template('scan_tickets.html', reset_color=reset_color, color=color, given_code=given_code)
     return redirect(url_for('login'))
 
 # Logic for page that shows all the tickets in the database
@@ -134,23 +154,15 @@ def scan_tickets():
 def show_tickets():
     if 'loggedin' in session:
         # Print all the tickets that are in the database.
-        query = "SELECT * FROM Tickets ORDER BY name ASC"
+        query = "SELECT name, code, valid FROM Tickets ORDER BY name ASC"
         mycursor = mysql.connection.cursor()
         mycursor.execute(query)
-        mysql.connection.commit()
-        result = mycursor.fetchall() # Result is a tuple filled with dictionaries
-        # The following loop restructers only relevant info into a list of lists.
-        # This list of lists is used to display the data in the html file. 
-        data = []
-        for row in result:
-            data_row = []
-            name = row.get('name')
-            code = row.get('code')
-            validity = row.get('valid')
-            data_row.append(name)
-            data_row.append(code)
-            data_row.append(validity)
-            data.append(data_row)     
+        result = mycursor.fetchall()  # Result is a tuple of tuples
+        mycursor.close()
+
+        # Convert the result directly to the desired format
+        data = [[name, code, validity] for name, code, validity in result]
+        
         return render_template('show_tickets.html', data=data)
     return redirect(url_for('login'))
 
@@ -160,14 +172,23 @@ def show_tickets():
 def send_tickets():
     if 'loggedin' in session:
         if request.method == 'POST':
-        # Extract the info which is submitted by the user in the form 
-            info = request.form
-            sender_email = info['sender_email']
-            excel_file = info['excel_file']
-            subject = info['subject']
-            message = info['message']
-            password = info['password']
+            # If the user submits the form, extract the data
+            sender_email = request.form['sender_email']
+            excel_file = request.form['excel_file']
+            subject = request.form['subject']
+            message = request.form['message']
+            password = request.form['password']
  
+            # Input validation (to protect against sql injection)
+            if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', sender_email):
+                flash('Invalid email format!', 'error')
+                return render_template('send_tickets.html')
+            
+            # Check if the file is an excel file
+            if not excel_file.lower().endswith('.xlsx'):
+                flash('Invalid file format. Please use .xlsx files.', 'error')
+                return render_template('send_tickets.html')
+
             # Clear out the Tickets table before filling it again 
             mycursor = mysql.connection.cursor()
             query = "DELETE FROM Tickets WHERE valid!=5"
