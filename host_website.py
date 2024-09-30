@@ -94,16 +94,17 @@ def home():
 @app.route('/login/home/scan_tickets', methods=['GET', 'POST'])
 def scan_tickets():
     if 'loggedin' in session:
-        given_code=' '
+        given_code = ' '
         status = ' '
-        color = 'white' 
+        color = 'white'
+        reset_color = False
         if request.method == "POST":
             # Extract the entered code
             info = request.form
             given_code = info['fcode']
             mycursor = mysql.connection.cursor()
             # Extract the row in the database that corresponds to the given code
-            query="SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
+            query = "SELECT EXISTS(SELECT * FROM Tickets WHERE (code='" + given_code + "' AND valid=1));"
             mycursor.execute(query)
             mysql.connection.commit()
             result = str(mycursor.fetchall())
@@ -112,18 +113,20 @@ def scan_tickets():
             if result[-4] == '1':    
                 # If the given code is valid
                 # Update the validity of the code in the database
-                query="UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
+                query = "UPDATE Tickets SET valid=0 WHERE code='" + given_code + "';"
                 mycursor.execute(query)
                 mysql.connection.commit()
                 # Color and status are active variables which are passed to the hmtl file
                 # to dynamically update how the page looks. 
-                color='green' 
-                status='valid!'
+                color = 'green' 
+                status = 'valid!'
+                reset_color = True
             else:
-                color='red'
-                status='wrong (or has already been used).'
+                color = 'red'
+                status = 'wrong (or has already been used).'
+                reset_color = True
             mycursor.close()
-        return render_template('scan_tickets.html', given_code=given_code, status=status, color=color)
+        return render_template('scan_tickets.html', given_code=given_code, status=status, color=color, reset_color=reset_color)
     return redirect(url_for('login'))
 
 # Logic for page that shows all the tickets in the database
@@ -210,4 +213,3 @@ def send_tickets():
 # So that you can test the website when you make changes or are developing it.
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=8181)
-

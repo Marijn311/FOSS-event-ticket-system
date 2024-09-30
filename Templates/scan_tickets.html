@@ -7,8 +7,17 @@
     <!-- 
         CSS files need to be in the 'static' folder
     -->
+    <script>
+        function resetBackgroundColor() {
+            if ({{ reset_color|tojson }}) { // the IDE falsely recognizes this as a syntax error, but it works
+                setTimeout(function() {
+                    document.body.style.backgroundColor = 'white';
+                }, 2000); // Add a delay of 2 seconds (2000 milliseconds)
+            }
+        }
+    </script>
 </head>
-<body bgcolor="{{color}}">
+<body bgcolor="{{color}}" onload="resetBackgroundColor()">
     <div class="container">
         <div class="login">
             <h1>Enter Code</h1>
